@@ -3,7 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>CapCut JSON → SRT | Vietsub Tool</title>
 
@@ -42,12 +45,20 @@
         }
 
         header {
-            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            background: linear-gradient(
+                135deg,
+                #2563eb,
+                #4f46e5
+            );
+
             color: white;
             padding: 30px 22px;
             border-radius: 20px;
             margin-bottom: 16px;
-            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+
+            box-shadow:
+                0 10px 30px
+                rgba(37, 99, 235, 0.2);
         }
 
         header h1 {
@@ -66,43 +77,87 @@
             border-radius: 18px;
             padding: 20px;
             margin-bottom: 16px;
+
             border: 1px solid var(--border);
-            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+
+            box-shadow:
+                0 4px 18px
+                rgba(15, 23, 42, 0.05);
         }
 
         .card-title {
             display: flex;
             align-items: center;
             gap: 10px;
+
             margin: 0 0 16px;
+
             font-size: 20px;
         }
 
         .step {
             width: 30px;
             height: 30px;
+
             display: inline-flex;
             align-items: center;
             justify-content: center;
+
             background: var(--primary);
             color: white;
+
             border-radius: 50%;
+
             font-size: 14px;
             font-weight: bold;
+
             flex-shrink: 0;
         }
 
+        /* ================= FILE INPUT ================= */
+
+        #fileInput {
+            position: absolute;
+
+            width: 1px;
+            height: 1px;
+
+            padding: 0;
+            margin: -1px;
+
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+
+            border: 0;
+
+            opacity: 0;
+
+            pointer-events: none;
+        }
+
         .drop-zone {
+            display: block;
+
             border: 2px dashed #93c5fd;
             background: #eff6ff;
+
             border-radius: 16px;
+
             padding: 45px 20px;
+
             text-align: center;
+
             cursor: pointer;
+
             transition: 0.2s;
+
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .drop-zone:hover,
+        .drop-zone:focus,
         .drop-zone.dragover {
             background: #dbeafe;
             border-color: var(--primary);
@@ -133,15 +188,20 @@
             display: flex;
             align-items: center;
             gap: 12px;
+
             padding: 14px;
+
             background: #f8fafc;
             border: 1px solid var(--border);
+
             border-radius: 12px;
+
             margin-top: 14px;
         }
 
         .file-icon {
             font-size: 30px;
+            flex-shrink: 0;
         }
 
         .file-name {
@@ -162,17 +222,23 @@
             margin-top: 15px;
         }
 
-        button {
+        button,
+        .file-picker {
             border: 0;
             border-radius: 11px;
+
             padding: 13px 18px;
+
             font-size: 15px;
             font-weight: bold;
+
             cursor: pointer;
+
             transition: 0.2s;
         }
 
-        button:hover {
+        button:hover,
+        .file-picker:hover {
             transform: translateY(-1px);
         }
 
@@ -219,8 +285,11 @@
         .status {
             padding: 12px 14px;
             margin-top: 15px;
+
             border-radius: 10px;
+
             background: #f8fafc;
+
             font-size: 14px;
             line-height: 1.5;
         }
@@ -242,15 +311,21 @@
 
         .stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(140px, 1fr));
+
             gap: 10px;
             margin-top: 15px;
         }
 
         .stat {
             background: #f8fafc;
+
             border: 1px solid var(--border);
+
             border-radius: 12px;
+
             padding: 14px;
         }
 
@@ -267,7 +342,10 @@
 
         .translation-box {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(230px, 1fr));
+
             gap: 14px;
         }
 
@@ -277,8 +355,10 @@
 
         label {
             display: block;
+
             font-weight: bold;
             font-size: 14px;
+
             margin-bottom: 7px;
         }
 
@@ -286,12 +366,19 @@
         input,
         textarea {
             width: 100%;
+
             border: 1px solid var(--border);
+
             border-radius: 10px;
+
             padding: 12px;
+
             font-size: 15px;
+
             background: white;
+
             outline: none;
+
             color: var(--text);
         }
 
@@ -316,29 +403,41 @@
 
         .api-help {
             margin-top: 7px;
+
             color: var(--muted);
+
             font-size: 12px;
+
             line-height: 1.5;
         }
 
         .sub-box {
             margin-top: 15px;
+
             padding: 15px;
+
             border-radius: 12px;
+
             background: #f8fafc;
+
             border: 1px solid var(--border);
         }
 
         .sub-box-title {
             font-size: 15px;
             font-weight: bold;
+
             margin-bottom: 12px;
         }
 
         .prompt-toolbar {
             display: grid;
-            grid-template-columns: 1fr auto;
+
+            grid-template-columns:
+                1fr auto;
+
             gap: 10px;
+
             align-items: end;
         }
 
@@ -355,36 +454,52 @@
 
         .prompt-note {
             margin-top: 8px;
+
             padding: 10px 12px;
+
             background: #eef2ff;
+
             color: #3730a3;
+
             border-radius: 10px;
+
             font-size: 12px;
+
             line-height: 1.5;
         }
 
         .dictionary-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
             gap: 10px;
         }
 
         .dictionary-card {
             border: 2px solid var(--border);
+
             border-radius: 12px;
+
             padding: 14px;
+
             cursor: pointer;
+
             background: white;
+
             transition: 0.2s;
         }
 
         .dictionary-card:hover {
             border-color: #93c5fd;
+
             transform: translateY(-1px);
         }
 
         .dictionary-card.active {
             border-color: var(--primary);
+
             background: #eff6ff;
         }
 
@@ -400,17 +515,25 @@
 
         .dictionary-desc {
             color: var(--muted);
+
             font-size: 12px;
+
             line-height: 1.4;
         }
 
         .dictionary-result {
             margin-top: 12px;
+
             background: #f0fdf4;
+
             color: #166534;
+
             border-radius: 10px;
+
             padding: 10px 12px;
+
             font-size: 13px;
+
             line-height: 1.5;
         }
 
@@ -421,43 +544,63 @@
         .progress-bar {
             width: 100%;
             height: 12px;
+
             background: #e2e8f0;
+
             border-radius: 999px;
+
             overflow: hidden;
         }
 
         .progress-fill {
             width: 0%;
             height: 100%;
+
             background: var(--primary);
+
             transition: width 0.2s;
         }
 
         .progress-text {
             margin-top: 7px;
+
             text-align: center;
+
             color: var(--muted);
+
             font-size: 13px;
         }
 
         .preview {
             background: #0f172a;
             color: #e2e8f0;
+
             padding: 16px;
+
             border-radius: 12px;
+
             max-height: 520px;
+
             overflow-y: auto;
+
             font-family: monospace;
+
             font-size: 13px;
+
             line-height: 1.6;
+
             white-space: pre-wrap;
+
             word-break: break-word;
         }
 
         .preview-toolbar {
             display: flex;
+
             gap: 8px;
+
             flex-wrap: wrap;
+
             margin-bottom: 10px;
         }
 
@@ -468,26 +611,20 @@
 
         .download-note {
             margin-top: 10px;
-            padding: 10px 12px;
-            border-radius: 10px;
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.5;
-        }
 
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 9px;
-            border-radius: 999px;
+            padding: 10px 12px;
+
+            border-radius: 10px;
+
+            background: #f8fafc;
+
+            border: 1px solid var(--border);
+
+            color: var(--muted);
+
             font-size: 12px;
-            font-weight: bold;
-            background: #e2e8f0;
-            margin-right: 4px;
-            margin-bottom: 4px;
+
+            line-height: 1.5;
         }
 
         .hidden {
@@ -496,12 +633,16 @@
 
         footer {
             text-align: center;
+
             color: var(--muted);
+
             font-size: 13px;
+
             padding: 15px 0 5px;
         }
 
         @media (max-width: 700px) {
+
             .dictionary-grid {
                 grid-template-columns: 1fr;
             }
@@ -509,9 +650,11 @@
             .prompt-toolbar {
                 grid-template-columns: 1fr;
             }
+
         }
 
         @media (max-width: 600px) {
+
             body {
                 padding: 9px;
             }
@@ -530,71 +673,114 @@
                 padding: 35px 14px;
             }
 
-            .buttons button {
+            .buttons button,
+            .buttons .file-picker {
                 width: 100%;
+                text-align: center;
+                justify-content: center;
             }
+
         }
     </style>
 </head>
+
 
 <body>
 
 <div class="container">
 
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
     <header>
-        <h1>🎬 CapCut JSON → SRT</h1>
+
+        <h1>
+            🎬 CapCut JSON → SRT
+        </h1>
 
         <p>
             Chuyển phụ đề CapCut sang SRT và dịch ngay trên trình duyệt
             bằng Google Dịch, Gemini, OpenRouter hoặc từ điển có sẵn.
         </p>
+
     </header>
 
 
-    <!-- ================= STEP 1 ================= -->
+    <!-- =====================================================
+         STEP 1
+    ====================================================== -->
 
     <section class="card">
 
         <h2 class="card-title">
-            <span class="step">1</span>
+
+            <span class="step">
+                1
+            </span>
+
             Chọn file CapCut
+
         </h2>
 
-        <div
+
+        <!--
+            Dùng LABEL thay vì JS click().
+            Cách này ổn định hơn trên Android.
+        -->
+
+        <label
             class="drop-zone"
             id="dropZone"
+            for="fileInput"
+            tabindex="0"
         >
+
             <div class="drop-icon">
                 📂
             </div>
 
             <div class="drop-title">
-                Kéo thả file JSON vào đây
+                Chạm để chọn file JSON
             </div>
 
             <div class="drop-subtitle">
-                hoặc chạm vào đây để chọn
+
+                hoặc kéo thả file vào đây trên máy tính
+
                 <br>
+
                 Hỗ trợ draft_content.json
+
             </div>
-        </div>
+
+        </label>
+
+
+        <!--
+            Không dùng hidden.
+            Android có thể xử lý input này ổn định hơn.
+        -->
 
         <input
             type="file"
             id="fileInput"
-            accept=".json,application/json"
-            hidden
+            accept=".json,application/json,text/json,text/plain,*/*"
         >
+
 
         <div
             id="fileInfo"
             class="file-info hidden"
         >
+
             <div class="file-icon">
                 📄
             </div>
 
             <div>
+
                 <div
                     id="fileName"
                     class="file-name"
@@ -604,21 +790,31 @@
                     id="fileSize"
                     class="file-size"
                 ></div>
+
             </div>
+
         </div>
+
 
         <div class="buttons">
 
-            <button
+            <!--
+                Dùng LABEL để mở file picker trực tiếp.
+            -->
+
+            <label
                 id="selectBtn"
-                class="btn-primary"
+                class="btn-primary file-picker"
+                for="fileInput"
             >
                 📁 Chọn file JSON
-            </button>
+            </label>
+
 
             <button
                 id="convertBtn"
                 class="btn-success"
+                type="button"
                 disabled
             >
                 ⚙️ Chuyển sang SRT
@@ -626,10 +822,12 @@
 
         </div>
 
+
         <div
             id="convertStatus"
             class="status hidden"
         ></div>
+
 
         <div
             id="stats"
@@ -637,6 +835,7 @@
         >
 
             <div class="stat">
+
                 <div
                     id="subtitleCount"
                     class="stat-number"
@@ -647,9 +846,12 @@
                 <div class="stat-label">
                     Phụ đề
                 </div>
+
             </div>
 
+
             <div class="stat">
+
                 <div
                     id="durationInfo"
                     class="stat-number"
@@ -660,6 +862,7 @@
                 <div class="stat-label">
                     Thời lượng
                 </div>
+
             </div>
 
         </div>
@@ -667,7 +870,9 @@
     </section>
 
 
-    <!-- ================= STEP 2 ================= -->
+    <!-- =====================================================
+         STEP 2
+    ====================================================== -->
 
     <section
         id="translationSection"
@@ -685,9 +890,10 @@
         </h2>
 
 
-        <!-- CHUNG -->
-
         <div class="translation-box">
+
+
+            <!-- METHOD -->
 
             <div>
 
@@ -695,7 +901,9 @@
                     Phương thức dịch
                 </label>
 
-                <select id="translationMethod">
+                <select
+                    id="translationMethod"
+                >
 
                     <option value="none">
                         🚫 Không dịch
@@ -721,13 +929,18 @@
 
             </div>
 
+
+            <!-- SOURCE -->
+
             <div>
 
                 <label>
                     Ngôn ngữ nguồn
                 </label>
 
-                <select id="sourceLanguage">
+                <select
+                    id="sourceLanguage"
+                >
 
                     <option value="zh-CN">
                         🇨🇳 Tiếng Trung
@@ -753,13 +966,18 @@
 
             </div>
 
+
+            <!-- TARGET -->
+
             <div>
 
                 <label>
                     Ngôn ngữ đích
                 </label>
 
-                <select id="targetLanguage">
+                <select
+                    id="targetLanguage"
+                >
 
                     <option value="vi">
                         🇻🇳 Tiếng Việt
@@ -773,10 +991,13 @@
 
             </div>
 
+
         </div>
 
 
-        <!-- ================= AI PROMPT ================= -->
+        <!-- =================================================
+             AI PROMPT
+        ================================================== -->
 
         <div
             id="aiPromptOptions"
@@ -787,7 +1008,9 @@
                 ✍️ Prompt dịch AI
             </div>
 
+
             <div class="prompt-toolbar">
+
 
                 <div>
 
@@ -821,6 +1044,7 @@
 
                 </div>
 
+
                 <div class="inline-actions">
 
                     <button
@@ -832,6 +1056,7 @@
                     </button>
 
                 </div>
+
 
             </div>
 
@@ -852,26 +1077,28 @@
 
             <div class="prompt-note">
 
-                💡 Prompt này được dùng cho
-                <b>Gemini</b> và <b>OpenRouter</b>.
+                💡 Prompt này dùng cho
+                <b>Gemini</b> và
+                <b>OpenRouter</b>.
 
                 <br><br>
 
-                Có thể dùng:
-                <b>{{SOURCE_LANGUAGE}}</b>,
+                Biến có thể dùng:
+
+                <b>{{SOURCE_LANGUAGE}}</b>
+
+                và
+
                 <b>{{TARGET_LANGUAGE}}</b>.
-
-                <br>
-
-                Web sẽ tự thêm dữ liệu phụ đề và yêu cầu AI trả lại
-                JSON để không làm lệch số dòng.
 
             </div>
 
         </div>
 
 
-        <!-- ================= GEMINI ================= -->
+        <!-- =================================================
+             GEMINI
+        ================================================== -->
 
         <div
             id="geminiOptions"
@@ -881,6 +1108,7 @@
             <div class="sub-box-title">
                 🤖 Cấu hình Gemini
             </div>
+
 
             <label>
                 🔑 Gemini API Key
@@ -893,14 +1121,16 @@
                 autocomplete="off"
             >
 
+
             <div class="api-help">
 
-                API key chỉ được dùng trực tiếp trong trình duyệt.
+                API key chỉ được sử dụng trực tiếp
+                trong trình duyệt.
 
                 <br>
 
-                ⚠️ Không nên nhúng API key cố định vào HTML
-                nếu ông public website.
+                ⚠️ Không nhúng API key cố định
+                vào HTML khi public website.
 
             </div>
 
@@ -947,13 +1177,16 @@
 
                 </div>
 
+
                 <div>
 
                     <label>
                         📦 Dòng / lượt
                     </label>
 
-                    <select id="geminiBatchSize">
+                    <select
+                        id="geminiBatchSize"
+                    >
 
                         <option value="5">
                             5 dòng
@@ -983,7 +1216,9 @@
         </div>
 
 
-        <!-- ================= OPENROUTER ================= -->
+        <!-- =================================================
+             OPENROUTER
+        ================================================== -->
 
         <div
             id="openrouterOptions"
@@ -993,6 +1228,7 @@
             <div class="sub-box-title">
                 🚀 Cấu hình OpenRouter
             </div>
+
 
             <label>
                 🔑 OpenRouter API Key
@@ -1005,14 +1241,16 @@
                 autocomplete="off"
             >
 
+
             <div class="api-help">
 
-                OpenRouter cho phép chọn nhiều model AI bằng cùng
-                một API.
+                OpenRouter cho phép dùng nhiều
+                model AI bằng cùng một API.
 
                 <br>
 
-                API key chỉ được dùng trực tiếp trong trình duyệt.
+                API key chỉ được sử dụng trực tiếp
+                trong trình duyệt.
 
             </div>
 
@@ -1042,12 +1280,13 @@
 
                     <div class="api-help">
 
-                        Có thể nhập model ID bất kỳ mà
+                        Nhập model ID mà
                         OpenRouter hỗ trợ.
 
                     </div>
 
                 </div>
+
 
                 <div>
 
@@ -1055,7 +1294,9 @@
                         📦 Dòng / lượt
                     </label>
 
-                    <select id="openrouterBatchSize">
+                    <select
+                        id="openrouterBatchSize"
+                    >
 
                         <option value="5">
                             5 dòng
@@ -1085,7 +1326,9 @@
         </div>
 
 
-        <!-- ================= BUILT-IN ================= -->
+        <!-- =================================================
+             BUILT-IN
+        ================================================== -->
 
         <div
             id="builtinOptions"
@@ -1096,10 +1339,18 @@
                 📚 Dịch có sẵn của web
             </div>
 
+
             <div class="api-help">
-                Không cần API. Web sẽ tìm các từ/cụm từ có trong
-                từ điển nội bộ và thay bằng bản dịch tiếng Việt.
-                Những câu không có trong từ điển sẽ được giữ nguyên.
+
+                Không cần API.
+
+                Web sẽ tìm các từ/cụm từ
+                có trong từ điển nội bộ.
+
+                <br>
+
+                Có 3 thể loại:
+
             </div>
 
 
@@ -1143,8 +1394,8 @@
                     </div>
 
                     <div class="dictionary-desc">
-                        Sư tôn, tông môn, tu luyện,
-                        linh lực, cảnh giới...
+                        Tu luyện, tông môn,
+                        sư tôn, cảnh giới...
                     </div>
 
                 </div>
@@ -1164,8 +1415,8 @@
                     </div>
 
                     <div class="dictionary-desc">
-                        Cách gọi người yêu,
-                        tình cảm, quan hệ.
+                        Người yêu, tình cảm,
+                        quan hệ nhân vật.
                     </div>
 
                 </div>
@@ -1177,35 +1428,43 @@
                 id="dictionaryResult"
                 class="dictionary-result"
             >
-                📚 Đã chọn: <b>Bình thường</b>
+                📚 Đã chọn:
+                <b>Bình thường</b>
             </div>
 
         </div>
 
 
-        <!-- ================= BUTTON ================= -->
+        <!-- =================================================
+             ACTIONS
+        ================================================== -->
 
         <div class="buttons">
 
             <button
                 id="translateBtn"
                 class="btn-primary"
+                type="button"
                 disabled
             >
                 🌐 Bắt đầu dịch
             </button>
 
+
             <button
                 id="downloadOriginalBtn"
                 class="btn-secondary"
+                type="button"
                 disabled
             >
                 ⬇️ SRT gốc
             </button>
 
+
             <button
                 id="downloadTranslatedBtn"
                 class="btn-success"
+                type="button"
                 disabled
             >
                 🇻🇳 Tải SRT đã dịch
@@ -1217,9 +1476,8 @@
         <div class="download-note">
 
             📥 <b>SRT tải xuống:</b>
-            web sử dụng cơ chế tải file của trình duyệt.
-            Trên Android, file sẽ được đưa vào thư mục
-            <b>Download / Tải xuống</b> theo cài đặt trình duyệt.
+            trình duyệt sẽ đưa file vào thư mục
+            <b>Download / Tải xuống</b> theo cài đặt.
 
         </div>
 
@@ -1244,6 +1502,7 @@
 
             </div>
 
+
             <div
                 id="progressText"
                 class="progress-text"
@@ -1256,7 +1515,9 @@
     </section>
 
 
-    <!-- ================= STEP 3 ================= -->
+    <!-- =====================================================
+         STEP 3
+    ====================================================== -->
 
     <section
         id="previewSection"
@@ -1278,14 +1539,17 @@
 
             <button
                 id="previewOriginalBtn"
-                class="btn-secondary"
+                class="btn-primary"
+                type="button"
             >
                 📄 Xem SRT gốc
             </button>
 
+
             <button
                 id="previewTranslatedBtn"
-                class="btn-primary"
+                class="btn-secondary"
+                type="button"
                 disabled
             >
                 🇻🇳 Xem SRT đã dịch
@@ -1303,7 +1567,10 @@
 
 
     <footer>
-        CapCut JSON → SRT • Công cụ chạy trực tiếp trên trình duyệt
+
+        CapCut JSON → SRT •
+        Công cụ chạy trực tiếp trên trình duyệt
+
     </footer>
 
 </div>
@@ -1333,91 +1600,144 @@ let previewMode = 'original';
 ========================================================= */
 
 const dropZone =
-    document.getElementById('dropZone');
+    document.getElementById(
+        'dropZone'
+    );
 
 const fileInput =
-    document.getElementById('fileInput');
-
-const selectBtn =
-    document.getElementById('selectBtn');
+    document.getElementById(
+        'fileInput'
+    );
 
 const convertBtn =
-    document.getElementById('convertBtn');
+    document.getElementById(
+        'convertBtn'
+    );
 
 const fileInfo =
-    document.getElementById('fileInfo');
+    document.getElementById(
+        'fileInfo'
+    );
 
 const fileName =
-    document.getElementById('fileName');
+    document.getElementById(
+        'fileName'
+    );
 
 const fileSize =
-    document.getElementById('fileSize');
+    document.getElementById(
+        'fileSize'
+    );
 
 const convertStatus =
-    document.getElementById('convertStatus');
+    document.getElementById(
+        'convertStatus'
+    );
 
 const stats =
-    document.getElementById('stats');
+    document.getElementById(
+        'stats'
+    );
 
 const subtitleCount =
-    document.getElementById('subtitleCount');
+    document.getElementById(
+        'subtitleCount'
+    );
 
 const durationInfo =
-    document.getElementById('durationInfo');
+    document.getElementById(
+        'durationInfo'
+    );
 
 const translationSection =
-    document.getElementById('translationSection');
+    document.getElementById(
+        'translationSection'
+    );
 
 const translationMethod =
-    document.getElementById('translationMethod');
+    document.getElementById(
+        'translationMethod'
+    );
 
 const sourceLanguage =
-    document.getElementById('sourceLanguage');
+    document.getElementById(
+        'sourceLanguage'
+    );
 
 const targetLanguage =
-    document.getElementById('targetLanguage');
+    document.getElementById(
+        'targetLanguage'
+    );
 
 const aiPromptOptions =
-    document.getElementById('aiPromptOptions');
+    document.getElementById(
+        'aiPromptOptions'
+    );
 
 const promptPreset =
-    document.getElementById('promptPreset');
+    document.getElementById(
+        'promptPreset'
+    );
 
 const customPrompt =
-    document.getElementById('customPrompt');
+    document.getElementById(
+        'customPrompt'
+    );
 
 const resetPromptBtn =
-    document.getElementById('resetPromptBtn');
+    document.getElementById(
+        'resetPromptBtn'
+    );
 
 const geminiOptions =
-    document.getElementById('geminiOptions');
+    document.getElementById(
+        'geminiOptions'
+    );
 
 const geminiKey =
-    document.getElementById('geminiKey');
+    document.getElementById(
+        'geminiKey'
+    );
 
 const geminiModel =
-    document.getElementById('geminiModel');
+    document.getElementById(
+        'geminiModel'
+    );
 
 const geminiBatchSize =
-    document.getElementById('geminiBatchSize');
+    document.getElementById(
+        'geminiBatchSize'
+    );
 
 const openrouterOptions =
-    document.getElementById('openrouterOptions');
+    document.getElementById(
+        'openrouterOptions'
+    );
 
 const openrouterKey =
-    document.getElementById('openrouterKey');
+    document.getElementById(
+        'openrouterKey'
+    );
 
 const openrouterModel =
-    document.getElementById('openrouterModel');
+    document.getElementById(
+        'openrouterModel'
+    );
 
 const openrouterBatchSize =
-    document.getElementById('openrouterBatchSize');
+    document.getElementById(
+        'openrouterBatchSize'
+    );
 
 const builtinOptions =
-    document.getElementById('builtinOptions');
+    document.getElementById(
+        'builtinOptions'
+    );
 
 const dictionaryResult =
-    document.getElementById('dictionaryResult');
+    document.getElementById(
+        'dictionaryResult'
+    );
 
 const dictionaryCards =
     document.querySelectorAll(
@@ -1425,34 +1745,54 @@ const dictionaryCards =
     );
 
 const translateBtn =
-    document.getElementById('translateBtn');
+    document.getElementById(
+        'translateBtn'
+    );
 
 const downloadOriginalBtn =
-    document.getElementById('downloadOriginalBtn');
+    document.getElementById(
+        'downloadOriginalBtn'
+    );
 
 const downloadTranslatedBtn =
-    document.getElementById('downloadTranslatedBtn');
+    document.getElementById(
+        'downloadTranslatedBtn'
+    );
 
 const translationStatus =
-    document.getElementById('translationStatus');
+    document.getElementById(
+        'translationStatus'
+    );
 
 const progressWrapper =
-    document.getElementById('progressWrapper');
+    document.getElementById(
+        'progressWrapper'
+    );
 
 const progressFill =
-    document.getElementById('progressFill');
+    document.getElementById(
+        'progressFill'
+    );
 
 const progressText =
-    document.getElementById('progressText');
+    document.getElementById(
+        'progressText'
+    );
 
 const previewSection =
-    document.getElementById('previewSection');
+    document.getElementById(
+        'previewSection'
+    );
 
 const preview =
-    document.getElementById('preview');
+    document.getElementById(
+        'preview'
+    );
 
 const previewOriginalBtn =
-    document.getElementById('previewOriginalBtn');
+    document.getElementById(
+        'previewOriginalBtn'
+    );
 
 const previewTranslatedBtn =
     document.getElementById(
@@ -1480,28 +1820,30 @@ Yêu cầu:
 - Không thêm lời giải thích.
 - Không thêm chú thích.
 - Không tự ý thêm nội dung.
-- Giữ nguyên tên riêng khi không có lý do rõ ràng để dịch.
+- Giữ nguyên tên riêng khi phù hợp.
 - Giữ nguyên số lượng dòng.
 `.trim(),
 
-    xianxia: `
-Bạn là người dịch phụ đề phim Trung Quốc thể loại tu tiên, tiên hiệp,
-cổ phong sang tiếng Việt.
 
-Hãy ưu tiên cách dịch quen thuộc với cộng đồng xem phim tu tiên.
+    xianxia: `
+Bạn là người dịch phụ đề phim Trung Quốc thể loại tu tiên,
+tiên hiệp và cổ phong sang tiếng Việt.
 
 Yêu cầu:
-- Dịch tự nhiên, có không khí cổ phong.
+- Dịch tự nhiên và có không khí cổ phong.
 - Giữ đúng quan hệ sư đồ, trưởng bối, hậu bối, đạo hữu.
-- Các thuật ngữ như sư tôn, sư phụ, đệ tử, tông môn,
-  trưởng lão, cảnh giới, linh lực, linh khí, độ kiếp...
-  phải được dịch nhất quán.
+- Dịch thuật ngữ tu tiên nhất quán.
+- Ưu tiên các thuật ngữ quen thuộc như:
+  sư tôn, đệ tử, tông môn, trưởng lão,
+  tu luyện, linh lực, cảnh giới, độ kiếp,
+  phi thăng, kim đan, nguyên anh...
 - Không dịch máy móc từng chữ.
 - Không thêm lời giải thích.
 - Không thêm chú thích.
-- Giữ nguyên số lượng dòng.
 - Không tự ý đổi tên nhân vật.
+- Giữ nguyên số lượng dòng.
 `.trim(),
+
 
     romance: `
 Bạn là người dịch phụ đề phim Trung Quốc thể loại tình cảm,
@@ -1509,28 +1851,28 @@ ngôn tình và drama sang tiếng Việt.
 
 Yêu cầu:
 - Dịch tự nhiên, mềm mại và giống lời thoại đời thực.
-- Giữ chính xác sắc thái yêu đương, giận dỗi, lạnh lùng,
-  quan tâm hoặc thân mật.
-- Chọn xưng hô phù hợp với mối quan hệ.
-- Các cách gọi như anh, em, tôi, cô, chú, cậu, chị...
-  phải dựa trên ngữ cảnh.
+- Giữ đúng sắc thái yêu đương và cảm xúc.
+- Xưng hô phải dựa vào quan hệ nhân vật.
+- Ưu tiên câu thoại dễ hiểu và tự nhiên.
 - Không dịch máy móc.
 - Không thêm lời giải thích.
 - Không thêm chú thích.
+- Không tự ý đổi tên nhân vật.
 - Giữ nguyên số lượng dòng.
 `.trim(),
+
 
     shortdrama: `
 Bạn là người dịch phụ đề cho video short drama Trung Quốc.
 
-Mục tiêu là tạo phụ đề tiếng Việt ngắn, tự nhiên và dễ đọc
-trên điện thoại.
+Mục tiêu:
+Tạo phụ đề tiếng Việt ngắn, tự nhiên và dễ đọc trên điện thoại.
 
 Yêu cầu:
 - Câu ngắn gọn nhưng không mất ý.
+- Giữ cảm xúc của nhân vật.
+- Giữ đúng quan hệ nhân vật.
 - Không dịch máy móc.
-- Ưu tiên lời thoại tự nhiên.
-- Giữ đúng cảm xúc và quan hệ nhân vật.
 - Không thêm lời giải thích.
 - Không thêm chú thích.
 - Giữ nguyên số lượng dòng.
@@ -1540,14 +1882,32 @@ Yêu cầu:
 
 
 /* =========================================================
-   DICTIONARY
+   FIX: LOAD PROMPT PRESET
 ========================================================= */
 
-/*
-   Từ điển chung.
-   Đây KHÔNG phải AI.
-   Chỉ dịch các từ/cụm có trong danh sách.
-*/
+function loadPromptPreset() {
+
+    const preset =
+        promptPreset.value;
+
+    if (
+        preset === 'custom'
+    ) {
+
+        return;
+
+    }
+
+    customPrompt.value =
+        PROMPT_PRESETS[preset] ||
+        PROMPT_PRESETS.natural;
+
+}
+
+
+/* =========================================================
+   DICTIONARY
+========================================================= */
 
 const COMMON_DICTIONARY = {
 
@@ -1620,6 +1980,7 @@ const COMMON_DICTIONARY = {
     '好的': 'Được',
     '知道了': 'Biết rồi',
     '明白了': 'Hiểu rồi'
+
 };
 
 
@@ -1701,6 +2062,7 @@ const XIANXIA_DICTIONARY = {
     '神识': 'Thần thức',
     '元神': 'Nguyên thần',
     '血脉': 'Huyết mạch'
+
 };
 
 
@@ -1757,6 +2119,7 @@ const ROMANCE_DICTIONARY = {
     '想抱你': 'Muốn ôm em / ôm anh',
     '抱抱': 'Ôm một cái',
     '亲一下': 'Hôn một cái'
+
 };
 
 
@@ -1780,7 +2143,7 @@ const DICTIONARIES = {
 
 
 /* =========================================================
-   PROMPT
+   LANGUAGE
 ========================================================= */
 
 function languageName(code) {
@@ -1791,57 +2154,40 @@ function languageName(code) {
         'en': 'Tiếng Anh',
         'ja': 'Tiếng Nhật',
         'ko': 'Tiếng Hàn',
-        'auto': 'ngôn ngữ tự động nhận diện',
+        'auto':
+            'ngôn ngữ tự động nhận diện',
         'vi': 'Tiếng Việt'
 
     };
 
-    return map[code] || code;
+    return (
+        map[code] ||
+        code
+    );
+
 }
 
+
+/* =========================================================
+   PROMPT
+========================================================= */
 
 function getCurrentPrompt() {
 
-    const preset =
-        promptPreset.value;
-
-    if (
-        preset === 'custom'
-    ) {
-
-        return customPrompt.value.trim();
-
-    }
-
-    return customPrompt.value.trim();
+    return (
+        customPrompt.value.trim()
+    );
 
 }
 
 
-function loadPromptPreset() {
-
-    const preset =
-        promptPreset.value;
-
-    if (
-        preset === 'custom'
-    ) {
-
-        return;
-
-    }
-
-    customPrompt.value =
-        PROMPT_PRESETS[preset] ||
-        PROMPT_PRESETS.natural;
-
-}
-
-
-function buildAIPrompt(items) {
+function buildAIPrompt(
+    items
+) {
 
     let instructions =
         getCurrentPrompt();
+
 
     if (!instructions) {
 
@@ -1855,6 +2201,7 @@ function buildAIPrompt(items) {
         languageName(
             sourceLanguage.value
         );
+
 
     const target =
         languageName(
@@ -1893,27 +2240,32 @@ QUY TẮC OUTPUT CỰC KỲ QUAN TRỌNG:
 5. Không được thêm dòng mới.
 6. Giữ nguyên id.
 7. Chỉ dịch trường "text".
-8. Không thay đổi timestamp vì input không chứa timestamp.
+8. Không thay đổi timestamp.
 9. Không thêm Markdown.
 10. Không thêm lời giải thích.
 11. Không thêm ```json.
-12. Không đổi thứ tự id nếu có thể.
+12. Không đổi thứ tự id.
 
-DỮ LIỆU PHỤ ĐỀ:
+DỮ LIỆU:
 
-${JSON.stringify(items, null, 2)}
+${JSON.stringify(
+    items,
+    null,
+    2
+)}
 
 FORMAT BẮT BUỘC:
 
 [
   {
     "id": 0,
-    "text": "Bản dịch tiếng Việt"
+    "text": "Bản dịch"
   }
 ]
 
 Chỉ trả về JSON array.
 `.trim();
+
 }
 
 
@@ -1930,6 +2282,7 @@ function showStatus(
     element.textContent =
         message;
 
+
     element.classList.remove(
         'hidden',
         'success',
@@ -1937,9 +2290,15 @@ function showStatus(
         'warning'
     );
 
+
     if (type) {
-        element.classList.add(type);
+
+        element.classList.add(
+            type
+        );
+
     }
+
 }
 
 
@@ -1956,6 +2315,7 @@ function sleep(ms) {
                 ms
             )
     );
+
 }
 
 
@@ -1968,6 +2328,7 @@ function msToSrtTime(ms) {
     ms =
         Number(ms);
 
+
     if (
         !Number.isFinite(ms)
     ) {
@@ -1976,29 +2337,37 @@ function msToSrtTime(ms) {
 
     }
 
+
     ms =
         Math.max(
             0,
             Math.round(ms)
         );
 
+
     const hours =
         Math.floor(
             ms / 3600000
         );
 
+
     const minutes =
         Math.floor(
-            (ms % 3600000) / 60000
+            (ms % 3600000) /
+            60000
         );
+
 
     const seconds =
         Math.floor(
-            (ms % 60000) / 1000
+            (ms % 60000) /
+            1000
         );
+
 
     const millis =
         ms % 1000;
+
 
     return (
 
@@ -2021,6 +2390,7 @@ function msToSrtTime(ms) {
             .padStart(3, '0')
 
     );
+
 }
 
 
@@ -2028,38 +2398,45 @@ function msToSrtTime(ms) {
    SRT
 ========================================================= */
 
-function subtitlesToSrt(list) {
+function subtitlesToSrt(
+    list
+) {
 
-    return list.map(
-        (item, index) => {
+    return list
+        .map(
+            (
+                item,
+                index
+            ) => {
 
-            return (
+                return (
 
-                (index + 1) +
-                '\r\n' +
+                    (index + 1) +
+                    '\r\n' +
 
-                msToSrtTime(
-                    item.startMs
-                ) +
+                    msToSrtTime(
+                        item.startMs
+                    ) +
 
-                ' --> ' +
+                    ' --> ' +
 
-                msToSrtTime(
-                    item.endMs
-                ) +
+                    msToSrtTime(
+                        item.endMs
+                    ) +
 
-                '\r\n' +
+                    '\r\n' +
 
-                String(
-                    item.text ?? ''
-                ) +
+                    String(
+                        item.text ?? ''
+                    ) +
 
-                '\r\n\r\n'
+                    '\r\n\r\n'
 
-            );
+                );
 
-        }
-    ).join('');
+            }
+        )
+        .join('');
 
 }
 
@@ -2068,61 +2445,13 @@ function subtitlesToSrt(list) {
    FILE
 ========================================================= */
 
-function selectFile(file) {
+function formatFileSize(
+    bytes
+) {
 
-    if (!file) {
-        return;
-    }
+    bytes =
+        Number(bytes) || 0;
 
-
-    if (
-        !file.name
-            .toLowerCase()
-            .endsWith('.json')
-    ) {
-
-        showStatus(
-            convertStatus,
-            '❌ Đây không phải file JSON.',
-            'error'
-        );
-
-        return;
-    }
-
-
-    selectedFile =
-        file;
-
-
-    fileName.textContent =
-        file.name;
-
-    fileSize.textContent =
-        formatFileSize(
-            file.size
-        );
-
-
-    fileInfo.classList.remove(
-        'hidden'
-    );
-
-
-    convertBtn.disabled =
-        false;
-
-
-    showStatus(
-        convertStatus,
-        '✅ Đã chọn file. Bấm "Chuyển sang SRT".',
-        'success'
-    );
-
-}
-
-
-function formatFileSize(bytes) {
 
     if (
         bytes < 1024
@@ -2159,11 +2488,89 @@ function formatFileSize(bytes) {
 }
 
 
+function selectFile(
+    file
+) {
+
+    if (!file) {
+
+        return;
+
+    }
+
+
+    const name =
+        String(
+            file.name || ''
+        ).trim();
+
+
+    /*
+        Kiểm tra extension thay vì MIME.
+        Android có thể trả MIME rỗng
+        hoặc application/octet-stream.
+    */
+
+    const isJson =
+        name
+            .toLowerCase()
+            .endsWith('.json');
+
+
+    if (!isJson) {
+
+        showStatus(
+            convertStatus,
+            '❌ File phải có đuôi .json',
+            'error'
+        );
+
+
+        return;
+
+    }
+
+
+    selectedFile =
+        file;
+
+
+    fileName.textContent =
+        name;
+
+
+    fileSize.textContent =
+        formatFileSize(
+            file.size
+        );
+
+
+    fileInfo.classList.remove(
+        'hidden'
+    );
+
+
+    convertBtn.disabled =
+        false;
+
+
+    showStatus(
+        convertStatus,
+        '✅ Đã nhận file JSON: ' +
+        name,
+        'success'
+    );
+
+}
+
+
 /* =========================================================
    PARSER
 ========================================================= */
 
-function parseMaybeJSON(value) {
+function parseMaybeJSON(
+    value
+) {
 
     let result =
         value;
@@ -2179,7 +2586,9 @@ function parseMaybeJSON(value) {
             typeof result !==
             'string'
         ) {
+
             break;
+
         }
 
 
@@ -2188,14 +2597,18 @@ function parseMaybeJSON(value) {
 
 
         if (!text) {
+
             return null;
+
         }
 
 
         try {
 
             result =
-                JSON.parse(text);
+                JSON.parse(
+                    text
+                );
 
         } catch {
 
@@ -2207,6 +2620,7 @@ function parseMaybeJSON(value) {
 
 
     return result;
+
 }
 
 
@@ -2222,13 +2636,16 @@ function getWordText(
     ) {
 
         return String(
-            words.text[index] ?? ''
+            words.text[
+                index
+            ] ?? ''
         ).trim();
 
     }
 
 
     return '';
+
 }
 
 
@@ -2236,11 +2653,9 @@ function extractWordTiming(
     words
 ) {
 
-    let startMs =
-        null;
+    let startMs = null;
 
-    let endMs =
-        null;
+    let endMs = null;
 
 
     if (
@@ -2275,13 +2690,17 @@ function extractWordTiming(
 
             const start =
                 Number(
-                    words.start_time[i]
+                    words.start_time[
+                        i
+                    ]
                 );
 
 
             if (
                 text &&
-                Number.isFinite(start)
+                Number.isFinite(
+                    start
+                )
             ) {
 
                 startMs =
@@ -2309,13 +2728,17 @@ function extractWordTiming(
 
             const end =
                 Number(
-                    words.end_time[i]
+                    words.end_time[
+                        i
+                    ]
                 );
 
 
             if (
                 text &&
-                Number.isFinite(end)
+                Number.isFinite(
+                    end
+                )
             ) {
 
                 endMs =
@@ -2340,9 +2763,12 @@ function extractWordTiming(
 
             if (
                 !word ||
-                typeof word !== 'object'
+                typeof word !==
+                'object'
             ) {
+
                 continue;
+
             }
 
 
@@ -2360,7 +2786,9 @@ function extractWordTiming(
 
             if (
                 text &&
-                Number.isFinite(start)
+                Number.isFinite(
+                    start
+                )
             ) {
 
                 startMs =
@@ -2374,7 +2802,8 @@ function extractWordTiming(
 
 
         for (
-            let i = words.length - 1;
+            let i =
+                words.length - 1;
             i >= 0;
             i--
         ) {
@@ -2385,9 +2814,12 @@ function extractWordTiming(
 
             if (
                 !word ||
-                typeof word !== 'object'
+                typeof word !==
+                'object'
             ) {
+
                 continue;
+
             }
 
 
@@ -2405,7 +2837,9 @@ function extractWordTiming(
 
             if (
                 text &&
-                Number.isFinite(end)
+                Number.isFinite(
+                    end
+                )
             ) {
 
                 endMs =
@@ -2421,8 +2855,10 @@ function extractWordTiming(
 
 
     return {
+
         startMs,
         endMs
+
     };
 
 }
@@ -2443,19 +2879,24 @@ function addSubtitle(
 
 
     if (!text) {
+
         return;
+
     }
 
 
     startMs =
         Number(startMs);
 
+
     endMs =
         Number(endMs);
 
 
     if (
-        !Number.isFinite(startMs)
+        !Number.isFinite(
+            startMs
+        )
     ) {
 
         startMs = 0;
@@ -2464,7 +2905,9 @@ function addSubtitle(
 
 
     if (
-        !Number.isFinite(endMs)
+        !Number.isFinite(
+            endMs
+        )
     ) {
 
         endMs = 0;
@@ -2483,9 +2926,13 @@ function addSubtitle(
 
 
     const key =
-        Math.round(startMs) +
+        Math.round(
+            startMs
+        ) +
         '|' +
-        Math.round(endMs) +
+        Math.round(
+            endMs
+        ) +
         '|' +
         text;
 
@@ -2523,7 +2970,8 @@ function processSentence(
 
     if (
         !sentence ||
-        typeof sentence !== 'object'
+        typeof sentence !==
+        'object'
     ) {
 
         return;
@@ -2538,7 +2986,9 @@ function processSentence(
 
 
     if (!text) {
+
         return;
+
     }
 
 
@@ -2555,7 +3005,9 @@ function processSentence(
 
 
     if (
-        !Number.isFinite(startMs)
+        !Number.isFinite(
+            startMs
+        )
     ) {
 
         startMs = 0;
@@ -2564,7 +3016,9 @@ function processSentence(
 
 
     if (
-        !Number.isFinite(endMs)
+        !Number.isFinite(
+            endMs
+        )
     ) {
 
         endMs = 0;
@@ -2584,7 +3038,8 @@ function processSentence(
 
 
         if (
-            timing.startMs !== null
+            timing.startMs !==
+            null
         ) {
 
             startMs =
@@ -2594,7 +3049,8 @@ function processSentence(
 
 
         if (
-            timing.endMs !== null
+            timing.endMs !==
+            null
         ) {
 
             endMs =
@@ -2624,7 +3080,8 @@ function extractSubs(
 
     if (
         !obj ||
-        typeof obj !== 'object'
+        typeof obj !==
+        'object'
     ) {
 
         return;
@@ -2649,7 +3106,8 @@ function extractSubs(
 
         if (
             cache &&
-            typeof cache === 'object' &&
+            typeof cache ===
+            'object' &&
             Array.isArray(
                 cache.sentence_list
             )
@@ -2698,7 +3156,8 @@ function extractSubs(
 
             if (
                 value &&
-                typeof value === 'object'
+                typeof value ===
+                'object'
             ) {
 
                 extractSubs(
@@ -2723,7 +3182,15 @@ function extractSubs(
 async function convertFile() {
 
     if (!selectedFile) {
+
+        showStatus(
+            convertStatus,
+            '⚠️ Chưa chọn file JSON.',
+            'warning'
+        );
+
         return;
+
     }
 
 
@@ -2753,6 +3220,15 @@ async function convertFile() {
                 .trim();
 
 
+        if (!content) {
+
+            throw new Error(
+                'File JSON đang trống.'
+            );
+
+        }
+
+
         showStatus(
             convertStatus,
             '⚙️ Đang phân tích phụ đề CapCut...',
@@ -2768,6 +3244,7 @@ async function convertFile() {
 
         const result =
             [];
+
 
         const seen =
             new Set();
@@ -2797,13 +3274,9 @@ async function convertFile() {
 
             showStatus(
                 convertStatus,
-                '⚠️ Không tìm thấy phụ đề trong file.',
+                '⚠️ Không tìm thấy phụ đề trong file JSON.',
                 'warning'
             );
-
-
-            convertBtn.disabled =
-                false;
 
 
             return;
@@ -2899,11 +3372,12 @@ async function convertFile() {
             'error'
         );
 
+    } finally {
+
+        convertBtn.disabled =
+            false;
+
     }
-
-
-    convertBtn.disabled =
-        false;
 
 }
 
@@ -2954,11 +3428,14 @@ function updateTranslationUI() {
         sourceLanguage.value =
             'zh-CN';
 
+
         targetLanguage.value =
             'vi';
 
+
         sourceLanguage.disabled =
             true;
+
 
         targetLanguage.disabled =
             true;
@@ -2967,6 +3444,7 @@ function updateTranslationUI() {
 
         sourceLanguage.disabled =
             false;
+
 
         targetLanguage.disabled =
             false;
@@ -2986,11 +3464,14 @@ function updateTranslationUI() {
         translatedSrt =
             '';
 
+
         downloadTranslatedBtn.disabled =
             true;
 
+
         previewTranslatedBtn.disabled =
             true;
+
 
         preview.textContent =
             originalSrt;
@@ -3039,15 +3520,16 @@ resetPromptBtn.addEventListener(
             customPrompt.value =
                 PROMPT_PRESETS.natural;
 
-            return;
+        } else {
+
+            loadPromptPreset();
 
         }
 
-        loadPromptPreset();
 
         showStatus(
             translationStatus,
-            '✅ Đã nạp lại prompt mẫu.',
+            '✅ Đã nạp lại prompt.',
             'success'
         );
 
@@ -3124,16 +3606,21 @@ async function googleTranslate(
 
     const url =
         'https://translate.googleapis.com/translate_a/single' +
+
         '?client=gtx' +
+
         '&sl=' +
         encodeURIComponent(
             source
         ) +
+
         '&tl=' +
         encodeURIComponent(
             target
         ) +
+
         '&dt=t' +
+
         '&q=' +
         encodeURIComponent(
             text
@@ -3191,11 +3678,11 @@ async function googleTranslate(
                 )
                 .join('');
 
-
         } catch (error) {
 
             lastError =
                 error;
+
 
             await sleep(
                 600 *
@@ -3207,16 +3694,18 @@ async function googleTranslate(
     }
 
 
-    throw lastError ||
+    throw (
+        lastError ||
         new Error(
             'Google Dịch thất bại.'
-        );
+        )
+    );
 
 }
 
 
 /* =========================================================
-   AI JSON PARSER
+   AI RESPONSE
 ========================================================= */
 
 function cleanAIResponse(
@@ -3248,6 +3737,7 @@ function cleanAIResponse(
 
     const first =
         clean.indexOf('[');
+
 
     const last =
         clean.lastIndexOf(']');
@@ -3349,9 +3839,11 @@ async function geminiTranslateBatch(
 
     const url =
         'https://generativelanguage.googleapis.com/v1beta/models/' +
+
         encodeURIComponent(
             model
         ) +
+
         ':generateContent';
 
 
@@ -3360,7 +3852,8 @@ async function geminiTranslateBatch(
             url,
             {
 
-                method: 'POST',
+                method:
+                    'POST',
 
                 headers: {
 
@@ -3378,12 +3871,16 @@ async function geminiTranslateBatch(
                         contents: [
 
                             {
+
                                 parts: [
+
                                     {
                                         text:
                                             prompt
                                     }
+
                                 ]
+
                             }
 
                         ],
@@ -3507,7 +4004,9 @@ async function openRouterTranslateBatch(
             'https:'
     ) {
 
-        headers['HTTP-Referer'] =
+        headers[
+            'HTTP-Referer'
+        ] =
             location.href;
 
     }
@@ -3518,7 +4017,8 @@ async function openRouterTranslateBatch(
             'https://openrouter.ai/api/v1/chat/completions',
             {
 
-                method: 'POST',
+                method:
+                    'POST',
 
                 headers,
 
@@ -3531,19 +4031,23 @@ async function openRouterTranslateBatch(
                         messages: [
 
                             {
+
                                 role:
                                     'system',
 
                                 content:
                                     'Bạn là chuyên gia dịch phụ đề phim Trung Quốc sang tiếng Việt.'
+
                             },
 
                             {
+
                                 role:
                                     'user',
 
                                 content:
                                     prompt
+
                             }
 
                         ],
@@ -3645,7 +4149,7 @@ async function openRouterTranslateBatch(
 
 
 /* =========================================================
-   DICTIONARY TRANSLATION
+   DICTIONARY
 ========================================================= */
 
 function escapeRegExp(
@@ -3697,7 +4201,9 @@ function translateBuiltinText(
     ) {
 
         if (
-            !result.includes(key)
+            !result.includes(
+                key
+            )
         ) {
 
             continue;
@@ -3744,13 +4250,13 @@ function translateBuiltinText(
 
 
 /* =========================================================
-   AI RESULT APPLY
+   AI APPLY
 ========================================================= */
 
 function applyAITranslations(
     translatedTexts,
     result,
-    batchStart
+    validIds
 ) {
 
     if (
@@ -3762,13 +4268,10 @@ function applyAITranslations(
     }
 
 
-    const validStart =
-        batchStart;
-
-
-    const validEnd =
-        batchStart +
-        1000000;
+    const validSet =
+        new Set(
+            validIds
+        );
 
 
     for (
@@ -3777,7 +4280,8 @@ function applyAITranslations(
 
         if (
             !item ||
-            typeof item !== 'object'
+            typeof item !==
+            'object'
         ) {
 
             continue;
@@ -3792,9 +4296,7 @@ function applyAITranslations(
 
 
         if (
-            !Number.isInteger(id) ||
-            id < validStart ||
-            id >= validEnd
+            !validSet.has(id)
         ) {
 
             continue;
@@ -3884,13 +4386,14 @@ async function translateSubtitles() {
         const source =
             sourceLanguage.value;
 
+
         const target =
             targetLanguage.value;
 
 
-        /* =========================================
+        /* ================================================
            GOOGLE
-        ========================================= */
+        ================================================= */
 
         if (
             method === 'google'
@@ -3934,6 +4437,7 @@ async function translateSubtitles() {
                 progressFill.style.width =
                     percent + '%';
 
+
                 progressText.textContent =
                     percent + '%';
 
@@ -3942,16 +4446,18 @@ async function translateSubtitles() {
         }
 
 
-        /* =========================================
+        /* ================================================
            GEMINI
-        ========================================= */
+        ================================================= */
 
         else if (
             method === 'gemini'
         ) {
 
             const key =
-                geminiKey.value.trim();
+                geminiKey
+                    .value
+                    .trim();
 
 
             if (!key) {
@@ -4034,7 +4540,10 @@ async function translateSubtitles() {
                 applyAITranslations(
                     translatedTexts,
                     result,
-                    start
+                    input.map(
+                        item =>
+                            item.id
+                    )
                 );
 
 
@@ -4055,6 +4564,7 @@ async function translateSubtitles() {
                 progressFill.style.width =
                     percent + '%';
 
+
                 progressText.textContent =
                     percent + '%';
 
@@ -4063,9 +4573,9 @@ async function translateSubtitles() {
         }
 
 
-        /* =========================================
+        /* ================================================
            OPENROUTER
-        ========================================= */
+        ================================================= */
 
         else if (
             method === 'openrouter'
@@ -4172,7 +4682,10 @@ async function translateSubtitles() {
                 applyAITranslations(
                     translatedTexts,
                     result,
-                    start
+                    input.map(
+                        item =>
+                            item.id
+                    )
                 );
 
 
@@ -4193,6 +4706,7 @@ async function translateSubtitles() {
                 progressFill.style.width =
                     percent + '%';
 
+
                 progressText.textContent =
                     percent + '%';
 
@@ -4201,9 +4715,9 @@ async function translateSubtitles() {
         }
 
 
-        /* =========================================
-           BUILT-IN DICTIONARY
-        ========================================= */
+        /* ================================================
+           BUILT-IN
+        ================================================= */
 
         else if (
             method === 'builtin'
@@ -4211,6 +4725,7 @@ async function translateSubtitles() {
 
             let totalReplacements =
                 0;
+
 
             let changedLines =
                 0;
@@ -4275,6 +4790,20 @@ async function translateSubtitles() {
                     'warning'
                 );
 
+
+                /*
+                    Cho trình duyệt có thời gian
+                    cập nhật progress bar.
+                */
+
+                if (
+                    i % 25 === 0
+                ) {
+
+                    await sleep(0);
+
+                }
+
             }
 
 
@@ -4285,17 +4814,16 @@ async function translateSubtitles() {
                 totalReplacements +
                 ' từ/cụm trong ' +
                 changedLines +
-                ' dòng. ' +
-                'Dòng không có trong từ điển được giữ nguyên.',
+                ' dòng.',
                 'success'
             );
 
         }
 
 
-        /* =========================================
+        /* ================================================
            FALLBACK
-        ========================================= */
+        ================================================= */
 
         for (
             let i = 0;
@@ -4315,9 +4843,9 @@ async function translateSubtitles() {
         }
 
 
-        /* =========================================
+        /* ================================================
            BUILD SRT
-        ========================================= */
+        ================================================= */
 
         const translated =
             subtitles.map(
@@ -4398,11 +4926,12 @@ async function translateSubtitles() {
             'error'
         );
 
+    } finally {
+
+        translateBtn.disabled =
+            false;
+
     }
-
-
-    translateBtn.disabled =
-        false;
 
 }
 
@@ -4413,7 +4942,9 @@ async function translateSubtitles() {
 
 function getBaseFileName() {
 
-    if (!selectedFile) {
+    if (
+        !selectedFile
+    ) {
 
         return 'subtitle';
 
@@ -4421,10 +4952,12 @@ function getBaseFileName() {
 
 
     return selectedFile.name
+
         .replace(
             /\.[^/.]+$/,
             ''
         )
+
         .replace(
             /[\\/:*?"<>|]/g,
             '_'
@@ -4480,6 +5013,12 @@ function downloadSrt(
         filename;
 
 
+    link.setAttribute(
+        'download',
+        filename
+    );
+
+
     link.style.display =
         'none';
 
@@ -4524,6 +5063,7 @@ function showOriginalPreview() {
         'btn-secondary'
     );
 
+
     previewOriginalBtn.classList.add(
         'btn-primary'
     );
@@ -4532,6 +5072,7 @@ function showOriginalPreview() {
     previewTranslatedBtn.classList.remove(
         'btn-primary'
     );
+
 
     previewTranslatedBtn.classList.add(
         'btn-secondary'
@@ -4561,6 +5102,7 @@ function showTranslatedPreview() {
         'btn-secondary'
     );
 
+
     previewTranslatedBtn.classList.add(
         'btn-primary'
     );
@@ -4570,6 +5112,7 @@ function showTranslatedPreview() {
         'btn-primary'
     );
 
+
     previewOriginalBtn.classList.add(
         'btn-secondary'
     );
@@ -4577,42 +5120,26 @@ function showTranslatedPreview() {
 }
 
 
-previewOriginalBtn.addEventListener(
-    'click',
-    showOriginalPreview
-);
-
-
-previewTranslatedBtn.addEventListener(
-    'click',
-    showTranslatedPreview
-);
-
-
 /* =========================================================
-   EVENTS
+   FILE PICKER EVENTS
 ========================================================= */
 
-selectBtn.addEventListener(
-    'click',
-    () =>
+/*
+    Không dùng:
         fileInput.click()
-);
 
-
-dropZone.addEventListener(
-    'click',
-    () =>
-        fileInput.click()
-);
-
+    nữa.
+    label for="fileInput" xử lý việc mở picker.
+*/
 
 fileInput.addEventListener(
     'change',
     event => {
 
         const file =
-            event.target.files?.[0];
+            event.target
+                ?.files
+                ?.item(0);
 
 
         if (file) {
@@ -4624,33 +5151,73 @@ fileInput.addEventListener(
         }
 
 
-        fileInput.value =
-            '';
+        /*
+            Reset value sau khi xử lý
+            để có thể chọn lại cùng file.
+        */
 
-    }
-);
+        setTimeout(
+            () => {
 
+                fileInput.value =
+                    '';
 
-dropZone.addEventListener(
-    'dragover',
-    event => {
-
-        event.preventDefault();
-
-        dropZone.classList.add(
-            'dragover'
+            },
+            100
         );
 
     }
 );
 
 
-dropZone.addEventListener(
-    'dragleave',
-    () => {
+/* =========================================================
+   DRAG & DROP
+========================================================= */
 
-        dropZone.classList.remove(
-            'dragover'
+[
+    'dragenter',
+    'dragover'
+].forEach(
+    eventName => {
+
+        dropZone.addEventListener(
+            eventName,
+            event => {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+                dropZone.classList.add(
+                    'dragover'
+                );
+
+            }
+        );
+
+    }
+);
+
+
+[
+    'dragleave',
+    'drop'
+].forEach(
+    eventName => {
+
+        dropZone.addEventListener(
+            eventName,
+            event => {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+                dropZone.classList.remove(
+                    'dragover'
+                );
+
+            }
         );
 
     }
@@ -4661,18 +5228,10 @@ dropZone.addEventListener(
     'drop',
     event => {
 
-        event.preventDefault();
-
-
-        dropZone.classList.remove(
-            'dragover'
-        );
-
-
         const file =
-            event
-                .dataTransfer
-                .files?.[0];
+            event.dataTransfer
+                ?.files
+                ?.item(0);
 
 
         if (file) {
@@ -4686,6 +5245,10 @@ dropZone.addEventListener(
     }
 );
 
+
+/* =========================================================
+   BUTTON EVENTS
+========================================================= */
 
 convertBtn.addEventListener(
     'click',
@@ -4736,14 +5299,65 @@ downloadTranslatedBtn.addEventListener(
 
 
 /* =========================================================
+   PREVIEW EVENTS
+========================================================= */
+
+previewOriginalBtn.addEventListener(
+    'click',
+    showOriginalPreview
+);
+
+
+previewTranslatedBtn.addEventListener(
+    'click',
+    showTranslatedPreview
+);
+
+
+/* =========================================================
    INITIALIZE
 ========================================================= */
+
+/*
+    QUAN TRỌNG:
+    Bản cũ thiếu function loadPromptPreset(),
+    nên script bị ReferenceError khi khởi tạo.
+
+    Bản này đã có function đó.
+*/
 
 loadPromptPreset();
 
 updateTranslationUI();
 
 showOriginalPreview();
+
+
+/* =========================================================
+   GLOBAL ERROR GUARD
+========================================================= */
+
+window.addEventListener(
+    'error',
+    event => {
+
+        /*
+            Chỉ hiện lỗi nếu có lỗi JS ngoài dự kiến.
+        */
+
+        if (
+            event.error &&
+            event.error.message
+        ) {
+
+            console.error(
+                event.error
+            );
+
+        }
+
+    }
+);
 
 </script>
 
