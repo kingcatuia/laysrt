@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
@@ -11,6 +12,7 @@
     <title>CapCut JSON → SRT | Vietsub Tool</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -35,7 +37,10 @@
             padding: 16px;
             background: var(--bg);
             color: var(--text);
-            font-family: Arial, Helvetica, sans-serif;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
         }
 
         .container {
@@ -45,52 +50,83 @@
         }
 
         header {
-            background: linear-gradient(
-                135deg,
-                #2563eb,
-                #4f46e5
-            );
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #4f46e5
+                );
 
             color: white;
+
             padding: 30px 22px;
+
             border-radius: 20px;
+
             margin-bottom: 16px;
 
             box-shadow:
                 0 10px 30px
-                rgba(37, 99, 235, 0.2);
+                rgba(
+                    37,
+                    99,
+                    235,
+                    0.2
+                );
         }
 
         header h1 {
             margin: 0 0 8px;
-            font-size: clamp(25px, 5vw, 38px);
+
+            font-size:
+                clamp(
+                    25px,
+                    5vw,
+                    38px
+                );
         }
 
         header p {
             margin: 0;
+
             opacity: 0.9;
+
             line-height: 1.5;
         }
 
         .card {
-            background: var(--card);
+            background:
+                var(--card);
+
             border-radius: 18px;
+
             padding: 20px;
+
             margin-bottom: 16px;
 
-            border: 1px solid var(--border);
+            border:
+                1px solid
+                var(--border);
 
             box-shadow:
                 0 4px 18px
-                rgba(15, 23, 42, 0.05);
+                rgba(
+                    15,
+                    23,
+                    42,
+                    0.05
+                );
         }
 
         .card-title {
             display: flex;
+
             align-items: center;
+
             gap: 10px;
 
-            margin: 0 0 16px;
+            margin:
+                0 0 16px;
 
             font-size: 20px;
         }
@@ -100,21 +136,29 @@
             height: 30px;
 
             display: inline-flex;
+
             align-items: center;
+
             justify-content: center;
 
-            background: var(--primary);
+            background:
+                var(--primary);
+
             color: white;
 
             border-radius: 50%;
 
             font-size: 14px;
+
             font-weight: bold;
 
             flex-shrink: 0;
         }
 
-        /* ================= FILE INPUT ================= */
+
+        /* =====================================================
+           FILE INPUT
+        ===================================================== */
 
         #fileInput {
             position: absolute;
@@ -123,10 +167,22 @@
             height: 1px;
 
             padding: 0;
+
             margin: -1px;
 
             overflow: hidden;
-            clip: rect(0, 0, 0, 0);
+
+            clip:
+                rect(
+                    0,
+                    0,
+                    0,
+                    0
+                );
+
+            clip-path:
+                inset(50%);
+
             white-space: nowrap;
 
             border: 0;
@@ -139,60 +195,110 @@
         .drop-zone {
             display: block;
 
-            border: 2px dashed #93c5fd;
-            background: #eff6ff;
+            position: relative;
+
+            border:
+                2px dashed
+                #93c5fd;
+
+            background:
+                #eff6ff;
 
             border-radius: 16px;
 
-            padding: 45px 20px;
+            padding:
+                45px 20px;
 
             text-align: center;
 
             cursor: pointer;
 
-            transition: 0.2s;
+            transition:
+                background-color 0.2s,
+                border-color 0.2s,
+                transform 0.2s;
 
             user-select: none;
+
             -webkit-user-select: none;
+
+            -webkit-tap-highlight-color:
+                transparent;
         }
 
         .drop-zone:hover,
         .drop-zone:focus,
         .drop-zone.dragover {
-            background: #dbeafe;
-            border-color: var(--primary);
+            background:
+                #dbeafe;
+
+            border-color:
+                var(--primary);
         }
 
         .drop-zone.dragover {
-            transform: scale(1.01);
+            transform:
+                scale(1.01);
+
+            box-shadow:
+                0 0 0 4px
+                rgba(
+                    37,
+                    99,
+                    235,
+                    0.10
+                );
         }
 
         .drop-icon {
             font-size: 45px;
+
             margin-bottom: 10px;
+
+            pointer-events: none;
         }
 
         .drop-title {
             font-size: 19px;
+
             font-weight: bold;
+
+            pointer-events: none;
         }
 
         .drop-subtitle {
             margin-top: 7px;
-            color: var(--muted);
+
+            color:
+                var(--muted);
+
             font-size: 14px;
+
             line-height: 1.5;
+
+            pointer-events: none;
         }
+
+
+        /* =====================================================
+           FILE INFO
+        ===================================================== */
 
         .file-info {
             display: flex;
+
             align-items: center;
+
             gap: 12px;
 
             padding: 14px;
 
-            background: #f8fafc;
-            border: 1px solid var(--border);
+            background:
+                #f8fafc;
+
+            border:
+                1px solid
+                var(--border);
 
             border-radius: 12px;
 
@@ -201,162 +307,249 @@
 
         .file-icon {
             font-size: 30px;
+
             flex-shrink: 0;
         }
 
         .file-name {
             font-weight: bold;
+
             word-break: break-all;
         }
 
         .file-size {
-            color: var(--muted);
+            color:
+                var(--muted);
+
             font-size: 13px;
+
             margin-top: 3px;
         }
 
+
+        /* =====================================================
+           BUTTON
+        ===================================================== */
+
         .buttons {
             display: flex;
+
             flex-wrap: wrap;
+
             gap: 10px;
+
             margin-top: 15px;
         }
 
         button,
         .file-picker {
             border: 0;
+
             border-radius: 11px;
 
-            padding: 13px 18px;
+            padding:
+                13px 18px;
 
             font-size: 15px;
+
             font-weight: bold;
 
             cursor: pointer;
 
-            transition: 0.2s;
+            transition:
+                transform 0.2s,
+                opacity 0.2s,
+                background-color 0.2s;
+
+            font-family:
+                inherit;
         }
 
         button:hover,
         .file-picker:hover {
-            transform: translateY(-1px);
+            transform:
+                translateY(-1px);
         }
 
         button:disabled {
             opacity: 0.5;
-            cursor: not-allowed;
+
+            cursor:
+                not-allowed;
+
             transform: none;
         }
 
         .btn-primary {
-            background: var(--primary);
+            background:
+                var(--primary);
+
             color: white;
         }
 
         .btn-primary:hover {
-            background: var(--primary-dark);
+            background:
+                var(--primary-dark);
         }
 
         .btn-success {
-            background: var(--success);
+            background:
+                var(--success);
+
             color: white;
         }
 
         .btn-secondary {
-            background: #e2e8f0;
-            color: #0f172a;
+            background:
+                #e2e8f0;
+
+            color:
+                #0f172a;
         }
 
         .btn-danger {
-            background: #fee2e2;
-            color: var(--danger);
+            background:
+                #fee2e2;
+
+            color:
+                var(--danger);
         }
 
         .btn-purple {
-            background: var(--purple);
+            background:
+                var(--purple);
+
             color: white;
         }
 
         .btn-orange {
-            background: var(--orange);
+            background:
+                var(--orange);
+
             color: white;
         }
 
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
         .status {
-            padding: 12px 14px;
+            padding:
+                12px 14px;
+
             margin-top: 15px;
 
             border-radius: 10px;
 
-            background: #f8fafc;
+            background:
+                #f8fafc;
 
             font-size: 14px;
+
             line-height: 1.5;
         }
 
         .status.success {
-            background: #f0fdf4;
-            color: #166534;
+            background:
+                #f0fdf4;
+
+            color:
+                #166534;
         }
 
         .status.error {
-            background: #fef2f2;
-            color: #991b1b;
+            background:
+                #fef2f2;
+
+            color:
+                #991b1b;
         }
 
         .status.warning {
-            background: #fffbeb;
-            color: #92400e;
+            background:
+                #fffbeb;
+
+            color:
+                #92400e;
         }
+
+
+        /* =====================================================
+           STATS
+        ===================================================== */
 
         .stats {
             display: grid;
 
             grid-template-columns:
-                repeat(auto-fit, minmax(140px, 1fr));
+                repeat(
+                    auto-fit,
+                    minmax(
+                        140px,
+                        1fr
+                    )
+                );
 
             gap: 10px;
+
             margin-top: 15px;
         }
 
         .stat {
-            background: #f8fafc;
+            background:
+                #f8fafc;
 
-            border: 1px solid var(--border);
+            border:
+                1px solid
+                var(--border);
 
-            border-radius: 12px;
+            border-radius:
+                12px;
 
             padding: 14px;
         }
 
         .stat-number {
             font-size: 22px;
+
             font-weight: bold;
         }
 
         .stat-label {
-            color: var(--muted);
+            color:
+                var(--muted);
+
             font-size: 13px;
+
             margin-top: 3px;
         }
+
+
+        /* =====================================================
+           TRANSLATION
+        ===================================================== */
 
         .translation-box {
             display: grid;
 
             grid-template-columns:
-                repeat(auto-fit, minmax(230px, 1fr));
+                repeat(
+                    auto-fit,
+                    minmax(
+                        230px,
+                        1fr
+                    )
+                );
 
             gap: 14px;
-        }
-
-        .field-full {
-            grid-column: 1 / -1;
         }
 
         label {
             display: block;
 
             font-weight: bold;
+
             font-size: 14px;
 
             margin-bottom: 7px;
@@ -367,7 +560,9 @@
         textarea {
             width: 100%;
 
-            border: 1px solid var(--border);
+            border:
+                1px solid
+                var(--border);
 
             border-radius: 10px;
 
@@ -375,36 +570,48 @@
 
             font-size: 15px;
 
-            background: white;
+            background:
+                white;
 
             outline: none;
 
-            color: var(--text);
+            color:
+                var(--text);
+
+            font-family:
+                inherit;
         }
 
         textarea {
             min-height: 170px;
+
             resize: vertical;
+
             line-height: 1.5;
         }
 
         select:focus,
         input:focus,
         textarea:focus {
-            border-color: var(--primary);
+            border-color:
+                var(--primary);
         }
 
         select:disabled,
         input:disabled,
         textarea:disabled {
-            background: #f8fafc;
-            color: #94a3b8;
+            background:
+                #f8fafc;
+
+            color:
+                #94a3b8;
         }
 
         .api-help {
             margin-top: 7px;
 
-            color: var(--muted);
+            color:
+                var(--muted);
 
             font-size: 12px;
 
@@ -418,13 +625,17 @@
 
             border-radius: 12px;
 
-            background: #f8fafc;
+            background:
+                #f8fafc;
 
-            border: 1px solid var(--border);
+            border:
+                1px solid
+                var(--border);
         }
 
         .sub-box-title {
             font-size: 15px;
+
             font-weight: bold;
 
             margin-bottom: 12px;
@@ -443,23 +654,30 @@
 
         .inline-actions {
             display: flex;
+
             gap: 8px;
+
             flex-wrap: wrap;
         }
 
         .inline-actions button {
-            padding: 10px 12px;
+            padding:
+                10px 12px;
+
             font-size: 13px;
         }
 
         .prompt-note {
             margin-top: 8px;
 
-            padding: 10px 12px;
+            padding:
+                10px 12px;
 
-            background: #eef2ff;
+            background:
+                #eef2ff;
 
-            color: #3730a3;
+            color:
+                #3730a3;
 
             border-radius: 10px;
 
@@ -468,17 +686,27 @@
             line-height: 1.5;
         }
 
+
+        /* =====================================================
+           DICTIONARY
+        ===================================================== */
+
         .dictionary-grid {
             display: grid;
 
             grid-template-columns:
-                repeat(3, 1fr);
+                repeat(
+                    3,
+                    1fr
+                );
 
             gap: 10px;
         }
 
         .dictionary-card {
-            border: 2px solid var(--border);
+            border:
+                2px solid
+                var(--border);
 
             border-radius: 12px;
 
@@ -486,35 +714,46 @@
 
             cursor: pointer;
 
-            background: white;
+            background:
+                white;
 
-            transition: 0.2s;
+            transition:
+                0.2s;
+
+            user-select: none;
         }
 
         .dictionary-card:hover {
-            border-color: #93c5fd;
+            border-color:
+                #93c5fd;
 
-            transform: translateY(-1px);
+            transform:
+                translateY(-1px);
         }
 
         .dictionary-card.active {
-            border-color: var(--primary);
+            border-color:
+                var(--primary);
 
-            background: #eff6ff;
+            background:
+                #eff6ff;
         }
 
         .dictionary-icon {
             font-size: 25px;
+
             margin-bottom: 7px;
         }
 
         .dictionary-name {
             font-weight: bold;
+
             margin-bottom: 4px;
         }
 
         .dictionary-desc {
-            color: var(--muted);
+            color:
+                var(--muted);
 
             font-size: 12px;
 
@@ -524,18 +763,26 @@
         .dictionary-result {
             margin-top: 12px;
 
-            background: #f0fdf4;
+            background:
+                #f0fdf4;
 
-            color: #166534;
+            color:
+                #166534;
 
             border-radius: 10px;
 
-            padding: 10px 12px;
+            padding:
+                10px 12px;
 
             font-size: 13px;
 
             line-height: 1.5;
         }
+
+
+        /* =====================================================
+           PROGRESS
+        ===================================================== */
 
         .progress-wrapper {
             margin-top: 15px;
@@ -543,37 +790,53 @@
 
         .progress-bar {
             width: 100%;
+
             height: 12px;
 
-            background: #e2e8f0;
+            background:
+                #e2e8f0;
 
-            border-radius: 999px;
+            border-radius:
+                999px;
 
             overflow: hidden;
         }
 
         .progress-fill {
             width: 0%;
+
             height: 100%;
 
-            background: var(--primary);
+            background:
+                var(--primary);
 
-            transition: width 0.2s;
+            transition:
+                width 0.2s;
         }
 
         .progress-text {
             margin-top: 7px;
 
-            text-align: center;
+            text-align:
+                center;
 
-            color: var(--muted);
+            color:
+                var(--muted);
 
             font-size: 13px;
         }
 
+
+        /* =====================================================
+           PREVIEW
+        ===================================================== */
+
         .preview {
-            background: #0f172a;
-            color: #e2e8f0;
+            background:
+                #0f172a;
+
+            color:
+                #e2e8f0;
 
             padding: 16px;
 
@@ -583,15 +846,18 @@
 
             overflow-y: auto;
 
-            font-family: monospace;
+            font-family:
+                monospace;
 
             font-size: 13px;
 
             line-height: 1.6;
 
-            white-space: pre-wrap;
+            white-space:
+                pre-wrap;
 
-            word-break: break-word;
+            word-break:
+                break-word;
         }
 
         .preview-toolbar {
@@ -605,83 +871,136 @@
         }
 
         .preview-toolbar button {
-            padding: 9px 12px;
+            padding:
+                9px 12px;
+
             font-size: 13px;
         }
+
+
+        /* =====================================================
+           DOWNLOAD
+        ===================================================== */
 
         .download-note {
             margin-top: 10px;
 
-            padding: 10px 12px;
+            padding:
+                10px 12px;
 
             border-radius: 10px;
 
-            background: #f8fafc;
+            background:
+                #f8fafc;
 
-            border: 1px solid var(--border);
+            border:
+                1px solid
+                var(--border);
 
-            color: var(--muted);
+            color:
+                var(--muted);
 
             font-size: 12px;
 
             line-height: 1.5;
         }
 
+
+        /* =====================================================
+           HIDDEN
+        ===================================================== */
+
         .hidden {
-            display: none !important;
+            display:
+                none !important;
         }
 
-        footer {
-            text-align: center;
 
-            color: var(--muted);
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        footer {
+            text-align:
+                center;
+
+            color:
+                var(--muted);
 
             font-size: 13px;
 
-            padding: 15px 0 5px;
+            padding:
+                15px 0 5px;
         }
 
-        @media (max-width: 700px) {
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (
+            max-width: 700px
+        ) {
 
             .dictionary-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns:
+                    1fr;
             }
 
             .prompt-toolbar {
-                grid-template-columns: 1fr;
+                grid-template-columns:
+                    1fr;
             }
 
         }
 
-        @media (max-width: 600px) {
+
+        @media (
+            max-width: 600px
+        ) {
 
             body {
-                padding: 9px;
+                padding:
+                    9px;
             }
 
             header {
-                padding: 24px 18px;
-                border-radius: 16px;
+                padding:
+                    24px 18px;
+
+                border-radius:
+                    16px;
             }
 
             .card {
-                padding: 15px;
-                border-radius: 15px;
+                padding:
+                    15px;
+
+                border-radius:
+                    15px;
             }
 
             .drop-zone {
-                padding: 35px 14px;
+                padding:
+                    35px 14px;
             }
 
             .buttons button,
             .buttons .file-picker {
-                width: 100%;
-                text-align: center;
-                justify-content: center;
+                width:
+                    100%;
+
+                text-align:
+                    center;
+
+                justify-content:
+                    center;
             }
 
         }
+
     </style>
+
 </head>
 
 
@@ -726,8 +1045,11 @@
 
 
         <!--
-            Dùng LABEL thay vì JS click().
-            Cách này ổn định hơn trên Android.
+            Khu vực nhận file.
+
+            QUAN TRỌNG:
+            Không dùng onclick để xử lý drop.
+            Sự kiện drag/drop được xử lý bằng JS bên dưới.
         -->
 
         <label
@@ -742,26 +1064,17 @@
             </div>
 
             <div class="drop-title">
-                Chạm để chọn file JSON
+                Kéo thả file JSON vào đây
             </div>
 
             <div class="drop-subtitle">
-
-                hoặc kéo thả file vào đây trên máy tính
-
+                hoặc chạm vào đây để chọn
                 <br>
-
                 Hỗ trợ draft_content.json
-
             </div>
 
         </label>
 
-
-        <!--
-            Không dùng hidden.
-            Android có thể xử lý input này ổn định hơn.
-        -->
 
         <input
             type="file"
@@ -797,10 +1110,6 @@
 
 
         <div class="buttons">
-
-            <!--
-                Dùng LABEL để mở file picker trực tiếp.
-            -->
 
             <label
                 id="selectBtn"
@@ -893,8 +1202,6 @@
         <div class="translation-box">
 
 
-            <!-- METHOD -->
-
             <div>
 
                 <label>
@@ -929,8 +1236,6 @@
 
             </div>
 
-
-            <!-- SOURCE -->
 
             <div>
 
@@ -967,8 +1272,6 @@
             </div>
 
 
-            <!-- TARGET -->
-
             <div>
 
                 <label>
@@ -991,7 +1294,6 @@
 
             </div>
 
-
         </div>
 
 
@@ -1010,7 +1312,6 @@
 
 
             <div class="prompt-toolbar">
-
 
                 <div>
 
@@ -1057,7 +1358,6 @@
 
                 </div>
 
-
             </div>
 
 
@@ -1083,12 +1383,9 @@
 
                 <br><br>
 
-                Biến có thể dùng:
-
+                Có thể dùng:
                 <b>{{SOURCE_LANGUAGE}}</b>
-
                 và
-
                 <b>{{TARGET_LANGUAGE}}</b>.
 
             </div>
@@ -1279,10 +1576,7 @@
                     >
 
                     <div class="api-help">
-
-                        Nhập model ID mà
-                        OpenRouter hỗ trợ.
-
+                        Nhập model ID mà OpenRouter hỗ trợ.
                     </div>
 
                 </div>
@@ -1327,7 +1621,7 @@
 
 
         <!-- =================================================
-             BUILT-IN
+             BUILTIN
         ================================================== -->
 
         <div
@@ -1882,7 +2176,7 @@ Yêu cầu:
 
 
 /* =========================================================
-   FIX: LOAD PROMPT PRESET
+   LOAD PROMPT
 ========================================================= */
 
 function loadPromptPreset() {
@@ -1898,6 +2192,7 @@ function loadPromptPreset() {
 
     }
 
+
     customPrompt.value =
         PROMPT_PRESETS[preset] ||
         PROMPT_PRESETS.natural;
@@ -1906,7 +2201,7 @@ function loadPromptPreset() {
 
 
 /* =========================================================
-   DICTIONARY
+   DICTIONARIES
 ========================================================= */
 
 const COMMON_DICTIONARY = {
@@ -2146,19 +2441,32 @@ const DICTIONARIES = {
    LANGUAGE
 ========================================================= */
 
-function languageName(code) {
+function languageName(
+    code
+) {
 
     const map = {
 
-        'zh-CN': 'Tiếng Trung',
-        'en': 'Tiếng Anh',
-        'ja': 'Tiếng Nhật',
-        'ko': 'Tiếng Hàn',
+        'zh-CN':
+            'Tiếng Trung',
+
+        'en':
+            'Tiếng Anh',
+
+        'ja':
+            'Tiếng Nhật',
+
+        'ko':
+            'Tiếng Hàn',
+
         'auto':
             'ngôn ngữ tự động nhận diện',
-        'vi': 'Tiếng Việt'
+
+        'vi':
+            'Tiếng Việt'
 
     };
+
 
     return (
         map[code] ||
@@ -2169,13 +2477,15 @@ function languageName(code) {
 
 
 /* =========================================================
-   PROMPT
+   PROMPT BUILD
 ========================================================= */
 
 function getCurrentPrompt() {
 
     return (
-        customPrompt.value.trim()
+        customPrompt
+            .value
+            .trim()
     );
 
 }
@@ -2192,7 +2502,8 @@ function buildAIPrompt(
     if (!instructions) {
 
         instructions =
-            PROMPT_PRESETS.natural;
+            PROMPT_PRESETS
+                .natural;
 
     }
 
@@ -2243,7 +2554,7 @@ QUY TẮC OUTPUT CỰC KỲ QUAN TRỌNG:
 8. Không thay đổi timestamp.
 9. Không thêm Markdown.
 10. Không thêm lời giải thích.
-11. Không thêm ```json.
+11. Không thêm \`\`\`json.
 12. Không đổi thứ tự id.
 
 DỮ LIỆU:
@@ -2254,7 +2565,7 @@ ${JSON.stringify(
     2
 )}
 
-FORMAT BẮT BUỘC:
+FORMAT:
 
 [
   {
@@ -2306,7 +2617,9 @@ function showStatus(
    SLEEP
 ========================================================= */
 
-function sleep(ms) {
+function sleep(
+    ms
+) {
 
     return new Promise(
         resolve =>
@@ -2323,14 +2636,18 @@ function sleep(ms) {
    TIME
 ========================================================= */
 
-function msToSrtTime(ms) {
+function msToSrtTime(
+    ms
+) {
 
     ms =
         Number(ms);
 
 
     if (
-        !Number.isFinite(ms)
+        !Number.isFinite(
+            ms
+        )
     ) {
 
         ms = 0;
@@ -2427,7 +2744,8 @@ function subtitlesToSrt(
                     '\r\n' +
 
                     String(
-                        item.text ?? ''
+                        item.text ??
+                        ''
                     ) +
 
                     '\r\n\r\n'
@@ -2457,36 +2775,51 @@ function formatFileSize(
         bytes < 1024
     ) {
 
-        return bytes + ' B';
+        return (
+            bytes +
+            ' B'
+        );
 
     }
 
 
     if (
-        bytes < 1024 * 1024
+        bytes <
+        1024 * 1024
     ) {
 
         return (
+
             (
-                bytes / 1024
+                bytes /
+                1024
             ).toFixed(1) +
+
             ' KB'
+
         );
 
     }
 
 
     return (
+
         (
             bytes /
             1024 /
             1024
         ).toFixed(2) +
+
         ' MB'
+
     );
 
 }
 
+
+/* =========================================================
+   FILE SELECT
+========================================================= */
 
 function selectFile(
     file
@@ -2501,20 +2834,30 @@ function selectFile(
 
     const name =
         String(
-            file.name || ''
+            file.name ||
+            ''
         ).trim();
 
 
-    /*
-        Kiểm tra extension thay vì MIME.
-        Android có thể trả MIME rỗng
-        hoặc application/octet-stream.
-    */
+    if (!name) {
+
+        showStatus(
+            convertStatus,
+            '❌ Không đọc được tên file.',
+            'error'
+        );
+
+        return;
+
+    }
+
 
     const isJson =
         name
             .toLowerCase()
-            .endsWith('.json');
+            .endsWith(
+                '.json'
+            );
 
 
     if (!isJson) {
@@ -2524,7 +2867,6 @@ function selectFile(
             '❌ File phải có đuôi .json',
             'error'
         );
-
 
         return;
 
@@ -2554,14 +2896,523 @@ function selectFile(
         false;
 
 
+    /*
+        Reset kết quả cũ nếu ông chọn file mới.
+    */
+
+    subtitles =
+        [];
+
+    originalSrt =
+        '';
+
+    translatedSrt =
+        '';
+
+
+    stats.classList.add(
+        'hidden'
+    );
+
+
+    translationSection
+        .classList.add(
+            'hidden'
+        );
+
+
+    previewSection
+        .classList.add(
+            'hidden'
+        );
+
+
+    downloadOriginalBtn.disabled =
+        true;
+
+
+    downloadTranslatedBtn.disabled =
+        true;
+
+
+    previewTranslatedBtn.disabled =
+        true;
+
+
+    progressWrapper.classList.add(
+        'hidden'
+    );
+
+
+    preview.textContent =
+        '';
+
+
     showStatus(
         convertStatus,
         '✅ Đã nhận file JSON: ' +
-        name,
+        name +
+        '. Bấm "Chuyển sang SRT".',
         'success'
     );
 
 }
+
+
+/* =========================================================
+   DROP FILE EXTRACTION
+========================================================= */
+
+function getDroppedFile(
+    dataTransfer
+) {
+
+    if (!dataTransfer) {
+
+        return null;
+
+    }
+
+
+    /*
+        Cách 1:
+        File trực tiếp.
+    */
+
+    if (
+        dataTransfer.files &&
+        dataTransfer.files.length > 0
+    ) {
+
+        return (
+            dataTransfer.files[0]
+        );
+
+    }
+
+
+    /*
+        Cách 2:
+        Một số trình duyệt đưa file
+        vào DataTransferItem.
+    */
+
+    const items =
+        dataTransfer.items;
+
+
+    if (
+        items &&
+        items.length > 0
+    ) {
+
+        for (
+            let i = 0;
+            i < items.length;
+            i++
+        ) {
+
+            const item =
+                items[i];
+
+
+            if (
+                item.kind !==
+                'file'
+            ) {
+
+                continue;
+
+            }
+
+
+            const file =
+                item.getAsFile();
+
+
+            if (file) {
+
+                return file;
+
+            }
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   DRAG STATE
+========================================================= */
+
+let dragCounter = 0;
+
+
+function setDragActive(
+    active
+) {
+
+    if (active) {
+
+        dropZone.classList.add(
+            'dragover'
+        );
+
+    } else {
+
+        dropZone.classList.remove(
+            'dragover'
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DRAG ENTER
+========================================================= */
+
+document.addEventListener(
+    'dragenter',
+    event => {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        dragCounter++;
+
+
+        const types =
+            event.dataTransfer
+                ?.types;
+
+
+        /*
+            Chỉ highlight nếu có khả năng
+            đây là dữ liệu file.
+        */
+
+        if (
+            !types ||
+            types.length === 0 ||
+            types.includes('Files')
+        ) {
+
+            setDragActive(
+                true
+            );
+
+        }
+
+    },
+    false
+);
+
+
+/* =========================================================
+   DRAG OVER
+========================================================= */
+
+document.addEventListener(
+    'dragover',
+    event => {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        /*
+            CỰC KỲ QUAN TRỌNG:
+            Phải preventDefault ở dragover
+            thì browser mới cho phép drop.
+        */
+
+        if (
+            event.dataTransfer
+        ) {
+
+            event.dataTransfer.dropEffect =
+                'copy';
+
+        }
+
+
+        setDragActive(
+            true
+        );
+
+    },
+    false
+);
+
+
+/* =========================================================
+   DRAG LEAVE
+========================================================= */
+
+document.addEventListener(
+    'dragleave',
+    event => {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        dragCounter--;
+
+
+        if (
+            dragCounter <= 0
+        ) {
+
+            dragCounter =
+                0;
+
+            setDragActive(
+                false
+            );
+
+        }
+
+    },
+    false
+);
+
+
+/* =========================================================
+   DROP
+========================================================= */
+
+document.addEventListener(
+    'drop',
+    event => {
+
+        /*
+            Đây là phần fix chính.
+
+            Trước đây drop chỉ được nghe
+            trên label.
+
+            Bây giờ document bắt drop luôn,
+            nên thả file ở bất kỳ chỗ nào
+            trong trang cũng có thể nhận.
+        */
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        dragCounter =
+            0;
+
+
+        setDragActive(
+            false
+        );
+
+
+        const file =
+            getDroppedFile(
+                event.dataTransfer
+            );
+
+
+        if (!file) {
+
+            showStatus(
+                convertStatus,
+                '⚠️ Không lấy được file từ thao tác kéo thả.',
+                'warning'
+            );
+
+            return;
+
+        }
+
+
+        selectFile(
+            file
+        );
+
+    },
+    false
+);
+
+
+/* =========================================================
+   DROP ZONE EXTRA EVENTS
+========================================================= */
+
+dropZone.addEventListener(
+    'dragenter',
+    event => {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+        setDragActive(
+            true
+        );
+
+    },
+    false
+);
+
+
+dropZone.addEventListener(
+    'dragover',
+    event => {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        if (
+            event.dataTransfer
+        ) {
+
+            event.dataTransfer.dropEffect =
+                'copy';
+
+        }
+
+
+        setDragActive(
+            true
+        );
+
+    },
+    false
+);
+
+
+dropZone.addEventListener(
+    'dragleave',
+    event => {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+    },
+    false
+);
+
+
+dropZone.addEventListener(
+    'drop',
+    event => {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        dragCounter =
+            0;
+
+
+        setDragActive(
+            false
+        );
+
+
+        const file =
+            getDroppedFile(
+                event.dataTransfer
+            );
+
+
+        if (file) {
+
+            selectFile(
+                file
+            );
+
+        }
+
+    },
+    false
+);
+
+
+/* =========================================================
+   FILE INPUT
+========================================================= */
+
+fileInput.addEventListener(
+    'change',
+    event => {
+
+        const file =
+            event.target
+                ?.files
+                ?.item(0);
+
+
+        if (file) {
+
+            selectFile(
+                file
+            );
+
+        }
+
+
+        /*
+            Cho phép chọn lại cùng file.
+        */
+
+        setTimeout(
+            () => {
+
+                fileInput.value =
+                    '';
+
+            },
+            100
+        );
+
+    }
+);
+
+
+/* =========================================================
+   KEYBOARD ACCESS
+========================================================= */
+
+dropZone.addEventListener(
+    'keydown',
+    event => {
+
+        if (
+            event.key ===
+            'Enter' ||
+            event.key ===
+            ' '
+        ) {
+
+            event.preventDefault();
+
+            fileInput.click();
+
+        }
+
+    }
+);
 
 
 /* =========================================================
@@ -2636,9 +3487,8 @@ function getWordText(
     ) {
 
         return String(
-            words.text[
-                index
-            ] ?? ''
+            words.text[index] ??
+            ''
         ).trim();
 
     }
@@ -2653,9 +3503,11 @@ function extractWordTiming(
     words
 ) {
 
-    let startMs = null;
+    let startMs =
+        null;
 
-    let endMs = null;
+    let endMs =
+        null;
 
 
     if (
@@ -2754,7 +3606,9 @@ function extractWordTiming(
 
 
     if (
-        Array.isArray(words)
+        Array.isArray(
+            words
+        )
     ) {
 
         for (
@@ -2886,11 +3740,15 @@ function addSubtitle(
 
 
     startMs =
-        Number(startMs);
+        Number(
+            startMs
+        );
 
 
     endMs =
-        Number(endMs);
+        Number(
+            endMs
+        );
 
 
     if (
@@ -2899,7 +3757,8 @@ function addSubtitle(
         )
     ) {
 
-        startMs = 0;
+        startMs =
+            0;
 
     }
 
@@ -2910,7 +3769,8 @@ function addSubtitle(
         )
     ) {
 
-        endMs = 0;
+        endMs =
+            0;
 
     }
 
@@ -2938,7 +3798,9 @@ function addSubtitle(
 
 
     if (
-        seen.has(key)
+        seen.has(
+            key
+        )
     ) {
 
         return;
@@ -2946,7 +3808,9 @@ function addSubtitle(
     }
 
 
-    seen.add(key);
+    seen.add(
+        key
+    );
 
 
     result.push({
@@ -2981,7 +3845,8 @@ function processSentence(
 
     const text =
         String(
-            sentence.text ?? ''
+            sentence.text ??
+            ''
         ).trim();
 
 
@@ -3010,7 +3875,8 @@ function processSentence(
         )
     ) {
 
-        startMs = 0;
+        startMs =
+            0;
 
     }
 
@@ -3021,7 +3887,8 @@ function processSentence(
         )
     ) {
 
-        endMs = 0;
+        endMs =
+            0;
 
     }
 
@@ -3132,7 +3999,9 @@ function extractSubs(
 
 
     if (
-        Array.isArray(obj)
+        Array.isArray(
+            obj
+        )
     ) {
 
         for (
@@ -3151,7 +4020,9 @@ function extractSubs(
 
         for (
             const value
-            of Object.values(obj)
+            of Object.values(
+                obj
+            )
         ) {
 
             if (
@@ -3258,7 +4129,10 @@ async function convertFile() {
 
 
         result.sort(
-            (a, b) =>
+            (
+                a,
+                b
+            ) =>
                 a.startMs -
                 b.startMs
         );
@@ -3269,7 +4143,8 @@ async function convertFile() {
 
 
         if (
-            subtitles.length === 0
+            subtitles.length ===
+            0
         ) {
 
             showStatus(
@@ -3277,7 +4152,6 @@ async function convertFile() {
                 '⚠️ Không tìm thấy phụ đề trong file JSON.',
                 'warning'
             );
-
 
             return;
 
@@ -3360,7 +4234,9 @@ async function convertFile() {
         );
 
 
-    } catch (error) {
+    } catch (
+        error
+    ) {
 
         showStatus(
             convertStatus,
@@ -3674,11 +4550,15 @@ async function googleTranslate(
             return data[0]
                 .map(
                     item =>
-                        item[0] || ''
+                        item[0] ||
+                        ''
                 )
                 .join('');
 
-        } catch (error) {
+
+        } catch (
+            error
+        ) {
 
             lastError =
                 error;
@@ -3714,7 +4594,8 @@ function cleanAIResponse(
 
     let clean =
         String(
-            text ?? ''
+            text ??
+            ''
         ).trim();
 
 
@@ -3736,11 +4617,15 @@ function cleanAIResponse(
 
 
     const first =
-        clean.indexOf('[');
+        clean.indexOf(
+            '['
+        );
 
 
     const last =
-        clean.lastIndexOf(']');
+        clean.lastIndexOf(
+            ']'
+        );
 
 
     if (
@@ -3793,7 +4678,9 @@ function parseAIResult(
 
 
     if (
-        !Array.isArray(parsed)
+        !Array.isArray(
+            parsed
+        )
     ) {
 
         if (
@@ -3919,9 +4806,7 @@ async function geminiTranslateBatch(
             ) {
 
                 message =
-                    errorData
-                        .error
-                        .message;
+                    errorData.error.message;
 
             }
 
@@ -3945,7 +4830,8 @@ async function geminiTranslateBatch(
             ?.content?.parts
             ?.map(
                 part =>
-                    part.text || ''
+                    part.text ||
+                    ''
             )
             .join('');
 
@@ -4114,7 +5000,9 @@ async function openRouterTranslateBatch(
 
 
     if (
-        Array.isArray(content)
+        Array.isArray(
+            content
+        )
     ) {
 
         content =
@@ -4149,7 +5037,7 @@ async function openRouterTranslateBatch(
 
 
 /* =========================================================
-   DICTIONARY
+   DICTIONARY TRANSLATION
 ========================================================= */
 
 function escapeRegExp(
@@ -4171,7 +5059,8 @@ function translateBuiltinText(
 
     let result =
         String(
-            text ?? ''
+            text ??
+            ''
         );
 
 
@@ -4186,7 +5075,10 @@ function translateBuiltinText(
         Object.keys(
             dictionary
         ).sort(
-            (a, b) =>
+            (
+                a,
+                b
+            ) =>
                 b.length -
                 a.length
         );
@@ -4260,7 +5152,9 @@ function applyAITranslations(
 ) {
 
     if (
-        !Array.isArray(result)
+        !Array.isArray(
+            result
+        )
     ) {
 
         return;
@@ -4296,7 +5190,9 @@ function applyAITranslations(
 
 
         if (
-            !validSet.has(id)
+            !validSet.has(
+                id
+            )
         ) {
 
             continue;
@@ -4306,13 +5202,16 @@ function applyAITranslations(
 
         const text =
             String(
-                item.text ?? ''
+                item.text ??
+                ''
             ).trim();
 
 
         if (text) {
 
-            translatedTexts[id] =
+            translatedTexts[
+                id
+            ] =
                 text;
 
         }
@@ -4329,7 +5228,8 @@ function applyAITranslations(
 async function translateSubtitles() {
 
     if (
-        subtitles.length === 0
+        subtitles.length ===
+        0
     ) {
 
         return;
@@ -4391,7 +5291,7 @@ async function translateSubtitles() {
             targetLanguage.value;
 
 
-        /* ================================================
+        /* =================================================
            GOOGLE
         ================================================= */
 
@@ -4407,11 +5307,13 @@ async function translateSubtitles() {
 
                 showStatus(
                     translationStatus,
+
                     '🌐 Google Dịch dòng ' +
                     (i + 1) +
                     '/' +
                     subtitles.length +
                     '...',
+
                     'warning'
                 );
 
@@ -4429,24 +5331,25 @@ async function translateSubtitles() {
                         (
                             (i + 1) /
                             subtitles.length
-                        ) *
-                        100
+                        ) * 100
                     );
 
 
                 progressFill.style.width =
-                    percent + '%';
+                    percent +
+                    '%';
 
 
                 progressText.textContent =
-                    percent + '%';
+                    percent +
+                    '%';
 
             }
 
         }
 
 
-        /* ================================================
+        /* =================================================
            GEMINI
         ================================================= */
 
@@ -4455,8 +5358,7 @@ async function translateSubtitles() {
         ) {
 
             const key =
-                geminiKey
-                    .value
+                geminiKey.value
                     .trim();
 
 
@@ -4520,11 +5422,13 @@ async function translateSubtitles() {
 
                 showStatus(
                     translationStatus,
+
                     '🤖 Gemini đang dịch lượt ' +
                     (batchIndex + 1) +
                     '/' +
                     total +
                     '...',
+
                     'warning'
                 );
 
@@ -4556,24 +5460,25 @@ async function translateSubtitles() {
                                 subtitles.length
                             ) /
                             subtitles.length
-                        ) *
-                        100
+                        ) * 100
                     );
 
 
                 progressFill.style.width =
-                    percent + '%';
+                    percent +
+                    '%';
 
 
                 progressText.textContent =
-                    percent + '%';
+                    percent +
+                    '%';
 
             }
 
         }
 
 
-        /* ================================================
+        /* =================================================
            OPENROUTER
         ================================================= */
 
@@ -4662,11 +5567,13 @@ async function translateSubtitles() {
 
                 showStatus(
                     translationStatus,
+
                     '🚀 OpenRouter đang dịch lượt ' +
                     (batchIndex + 1) +
                     '/' +
                     total +
                     '...',
+
                     'warning'
                 );
 
@@ -4698,24 +5605,25 @@ async function translateSubtitles() {
                                 subtitles.length
                             ) /
                             subtitles.length
-                        ) *
-                        100
+                        ) * 100
                     );
 
 
                 progressFill.style.width =
-                    percent + '%';
+                    percent +
+                    '%';
 
 
                 progressText.textContent =
-                    percent + '%';
+                    percent +
+                    '%';
 
             }
 
         }
 
 
-        /* ================================================
+        /* =================================================
            BUILT-IN
         ================================================= */
 
@@ -4767,40 +5675,41 @@ async function translateSubtitles() {
                         (
                             (i + 1) /
                             subtitles.length
-                        ) *
-                        100
+                        ) * 100
                     );
 
 
                 progressFill.style.width =
-                    percent + '%';
+                    percent +
+                    '%';
 
 
                 progressText.textContent =
-                    percent + '%';
+                    percent +
+                    '%';
 
 
                 showStatus(
                     translationStatus,
+
                     '📚 Đang tra từ điển dòng ' +
                     (i + 1) +
                     '/' +
                     subtitles.length +
                     '...',
+
                     'warning'
                 );
 
 
-                /*
-                    Cho trình duyệt có thời gian
-                    cập nhật progress bar.
-                */
-
                 if (
-                    i % 25 === 0
+                    i % 25 ===
+                    0
                 ) {
 
-                    await sleep(0);
+                    await sleep(
+                        0
+                    );
 
                 }
 
@@ -4809,19 +5718,21 @@ async function translateSubtitles() {
 
             showStatus(
                 translationStatus,
+
                 '✅ Dịch có sẵn xong. ' +
                 'Đã thay ' +
                 totalReplacements +
                 ' từ/cụm trong ' +
                 changedLines +
                 ' dòng.',
+
                 'success'
             );
 
         }
 
 
-        /* ================================================
+        /* =================================================
            FALLBACK
         ================================================= */
 
@@ -4843,8 +5754,8 @@ async function translateSubtitles() {
         }
 
 
-        /* ================================================
-           BUILD SRT
+        /* =================================================
+           SRT
         ================================================= */
 
         const translated =
@@ -4897,9 +5808,11 @@ async function translateSubtitles() {
 
             showStatus(
                 translationStatus,
+
                 '✅ Dịch xong ' +
                 subtitles.length +
                 ' dòng.',
+
                 'success'
             );
 
@@ -4914,15 +5827,19 @@ async function translateSubtitles() {
             '100% — Hoàn thành';
 
 
-    } catch (error) {
+    } catch (
+        error
+    ) {
 
         showStatus(
             translationStatus,
+
             '❌ Dịch lỗi: ' +
             (
                 error?.message ||
                 'Không xác định'
             ),
+
             'error'
         );
 
@@ -4942,9 +5859,7 @@ async function translateSubtitles() {
 
 function getBaseFileName() {
 
-    if (
-        !selectedFile
-    ) {
+    if (!selectedFile) {
 
         return 'subtitle';
 
@@ -5121,132 +6036,6 @@ function showTranslatedPreview() {
 
 
 /* =========================================================
-   FILE PICKER EVENTS
-========================================================= */
-
-/*
-    Không dùng:
-        fileInput.click()
-
-    nữa.
-    label for="fileInput" xử lý việc mở picker.
-*/
-
-fileInput.addEventListener(
-    'change',
-    event => {
-
-        const file =
-            event.target
-                ?.files
-                ?.item(0);
-
-
-        if (file) {
-
-            selectFile(
-                file
-            );
-
-        }
-
-
-        /*
-            Reset value sau khi xử lý
-            để có thể chọn lại cùng file.
-        */
-
-        setTimeout(
-            () => {
-
-                fileInput.value =
-                    '';
-
-            },
-            100
-        );
-
-    }
-);
-
-
-/* =========================================================
-   DRAG & DROP
-========================================================= */
-
-[
-    'dragenter',
-    'dragover'
-].forEach(
-    eventName => {
-
-        dropZone.addEventListener(
-            eventName,
-            event => {
-
-                event.preventDefault();
-
-                event.stopPropagation();
-
-                dropZone.classList.add(
-                    'dragover'
-                );
-
-            }
-        );
-
-    }
-);
-
-
-[
-    'dragleave',
-    'drop'
-].forEach(
-    eventName => {
-
-        dropZone.addEventListener(
-            eventName,
-            event => {
-
-                event.preventDefault();
-
-                event.stopPropagation();
-
-                dropZone.classList.remove(
-                    'dragover'
-                );
-
-            }
-        );
-
-    }
-);
-
-
-dropZone.addEventListener(
-    'drop',
-    event => {
-
-        const file =
-            event.dataTransfer
-                ?.files
-                ?.item(0);
-
-
-        if (file) {
-
-            selectFile(
-                file
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
    BUTTON EVENTS
 ========================================================= */
 
@@ -5298,10 +6087,6 @@ downloadTranslatedBtn.addEventListener(
 );
 
 
-/* =========================================================
-   PREVIEW EVENTS
-========================================================= */
-
 previewOriginalBtn.addEventListener(
     'click',
     showOriginalPreview
@@ -5318,46 +6103,11 @@ previewTranslatedBtn.addEventListener(
    INITIALIZE
 ========================================================= */
 
-/*
-    QUAN TRỌNG:
-    Bản cũ thiếu function loadPromptPreset(),
-    nên script bị ReferenceError khi khởi tạo.
-
-    Bản này đã có function đó.
-*/
-
 loadPromptPreset();
 
 updateTranslationUI();
 
 showOriginalPreview();
-
-
-/* =========================================================
-   GLOBAL ERROR GUARD
-========================================================= */
-
-window.addEventListener(
-    'error',
-    event => {
-
-        /*
-            Chỉ hiện lỗi nếu có lỗi JS ngoài dự kiến.
-        */
-
-        if (
-            event.error &&
-            event.error.message
-        ) {
-
-            console.error(
-                event.error
-            );
-
-        }
-
-    }
-);
 
 </script>
 
