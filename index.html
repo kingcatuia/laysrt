@@ -1173,10 +1173,91 @@ footer {
     }
 
 }
+
+/* VISITOR STATS */
+.site-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin: 14px 0 16px;
+}
+.site-stat {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 13px 15px;
+    box-shadow: 0 4px 14px rgba(15,23,42,.05);
+}
+.site-stat-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: bold;
+}
+.site-stat-number {
+    margin-top: 4px;
+    font-size: 24px;
+    font-weight: 800;
+}
+.online-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #16a34a;
+    box-shadow: 0 0 0 4px rgba(22,163,74,.12);
+}
+.stats-note {
+    margin-top: 7px;
+    color: var(--muted);
+    font-size: 11px;
+}
+/* DEVTOOLS OVERLAY */
+#devtoolsBlocker {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483647;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(2,6,23,.97);
+    color: white;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#devtoolsBlocker.active { display: flex; }
+.devtools-blocker-card {
+    width: min(520px, 100%);
+    padding: 28px 22px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 20px;
+    background: #111827;
+    box-shadow: 0 20px 80px rgba(0,0,0,.45);
+}
+.devtools-blocker-icon { font-size: 48px; margin-bottom: 10px; }
+.devtools-blocker-card h2 { margin: 0 0 9px; font-size: 24px; }
+.devtools-blocker-card p { margin: 0; color: #cbd5e1; line-height: 1.6; font-size: 14px; }
+@media (max-width: 560px) {
+    .site-stats { grid-template-columns: 1fr 1fr; }
+    .site-stat { padding: 11px 12px; }
+    .site-stat-number { font-size: 21px; }
+}
+
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
+
+<div id="devtoolsBlocker" aria-hidden="true">
+    <div class="devtools-blocker-card">
+        <div class="devtools-blocker-icon">🔒</div>
+        <h2>LaySRT đã chặn vì xài devtools/eruda</h2>
+        <p>DevTools hoặc Eruda đang được phát hiện. Hãy đóng công cụ kiểm tra rồi tải lại trang để tiếp tục sử dụng.</p>
+    </div>
+</div>
 
 <div class="container">
 
@@ -1196,6 +1277,19 @@ footer {
     </p>
 
 </header>
+
+<div class="site-stats" aria-label="Thống kê khách truy cập">
+    <div class="site-stat">
+        <div class="site-stat-top">👥 Tổng khách đã truy cập</div>
+        <div id="totalVisitors" class="site-stat-number">—</div>
+        <div class="stats-note">Tính theo trình duyệt/thiết bị đã ghi nhận</div>
+    </div>
+    <div class="site-stat">
+        <div class="site-stat-top"><span class="online-dot"></span> Đang online</div>
+        <div id="onlineVisitors" class="site-stat-number">—</div>
+        <div class="stats-note">Số phiên đang kết nối LaySRT</div>
+    </div>
+</div>
 
 
 <!-- =====================================================
@@ -1620,7 +1714,7 @@ footer {
             </select>
 
             <div class="api-help">
-                200 dòng/lượt có thể nhanh hơn nhưng yêu cầu model có context/output đủ lớn.
+                200 dòng/lượt chỉ là số dòng xử lý trong mỗi batch. File 500, 1.000 hay nhiều dòng hơn vẫn được dịch hết và ghép lại thành một SRT hoàn chỉnh.
             </div>
 
         </div>
@@ -2540,6 +2634,17 @@ let translationAbortController = null;
 const MEMORY_KEY =
     'laysrt_translation_memory_v2';
 
+/* =========================================================
+   PUBLIC VISITOR STATS CONFIG
+   Điền Supabase URL + publishable/anon key để bật thống kê.
+========================================================= */
+const STATS_CONFIG = {
+    enabled: true,
+    supabaseUrl: 'https://akitxcyugxkoirghysfx.supabase.co',
+    supabasePublishableKey: 'sb_publishable_RWhw5AM-OQ0NebHC-4WhVw_vOGpaT8l',
+    presenceChannel: 'laysrt-online-v1'
+};
+
 let translationMemory = [];
 
 
@@ -2583,6 +2688,15 @@ const durationInfo =
 
 const memoryCountStat =
     $('memoryCountStat');
+
+const totalVisitors =
+    $('totalVisitors');
+
+const onlineVisitors =
+    $('onlineVisitors');
+
+const devtoolsBlocker =
+    $('devtoolsBlocker');
 
 const translationSection =
     $('translationSection');
@@ -3708,7 +3822,7 @@ QUY TẮC OUTPUT:
 8. Không thay đổi timestamp.
 9. Không thêm Markdown.
 10. Không thêm lời giải thích.
-11. Không bọc bằng ```json.
+11. Không bọc bằng \`\`\`json.
 12. Không đổi thứ tự id.
 13. Nếu câu có tên riêng, số, ký hiệu hoặc thuật ngữ đặc biệt,
     phải giữ chính xác.
@@ -7923,6 +8037,206 @@ previewTranslatedBtn.addEventListener(
 
 
 /* =========================================================
+   VISITOR STATS — SUPABASE
+========================================================= */
+
+const VISITOR_ID_KEY = 'laysrt_visitor_id_v1';
+let statsClient = null;
+let statsChannel = null;
+let statsHeartbeat = null;
+
+function getVisitorId() {
+    try {
+        let id = localStorage.getItem(VISITOR_ID_KEY);
+        if (!id) {
+            id = 'v_' + crypto.randomUUID();
+            localStorage.setItem(VISITOR_ID_KEY, id);
+        }
+        return id;
+    } catch {
+        return 'v_' + Math.random().toString(36).slice(2) + Date.now();
+    }
+}
+
+function statsConfigured() {
+    return Boolean(
+        STATS_CONFIG.enabled &&
+        window.supabase?.createClient &&
+        STATS_CONFIG.supabaseUrl &&
+        STATS_CONFIG.supabasePublishableKey &&
+        !STATS_CONFIG.supabaseUrl.includes('YOUR_SUPABASE_') &&
+        !STATS_CONFIG.supabasePublishableKey.includes('YOUR_SUPABASE_')
+    );
+}
+
+function setStatsValue(element, value) {
+    if (element) element.textContent = Number.isFinite(value) ? value.toLocaleString('vi-VN') : '—';
+}
+
+async function updateVisitorRecord() {
+    if (!statsClient) return;
+    const visitorId = getVisitorId();
+    const { error } = await statsClient
+        .from('laysrt_visitors')
+        .upsert({
+            visitor_id: visitorId,
+            last_seen: new Date().toISOString()
+        }, { onConflict: 'visitor_id' });
+    if (error) throw error;
+}
+
+async function refreshTotalVisitors() {
+    if (!statsClient) return;
+    const { count, error } = await statsClient
+        .from('laysrt_visitors')
+        .select('visitor_id', { count: 'exact', head: true });
+    if (error) throw error;
+    setStatsValue(totalVisitors, count);
+}
+
+function refreshOnlineVisitors() {
+    if (!statsChannel) return;
+    const state = statsChannel.presenceState();
+    const sessions = new Set();
+    Object.values(state || {}).forEach(entries => {
+        (Array.isArray(entries) ? entries : []).forEach(entry => {
+            const id = entry?.visitor_id || entry?.presence_ref || entry?.online_id;
+            if (id) sessions.add(String(id));
+        });
+    });
+    setStatsValue(onlineVisitors, sessions.size);
+}
+
+async function initVisitorStats() {
+    if (!statsConfigured()) {
+        setStatsValue(totalVisitors, NaN);
+        setStatsValue(onlineVisitors, NaN);
+        return;
+    }
+
+    try {
+        statsClient = window.supabase.createClient(
+            STATS_CONFIG.supabaseUrl,
+            STATS_CONFIG.supabasePublishableKey,
+            { auth: { persistSession: false, autoRefreshToken: false } }
+        );
+
+        await updateVisitorRecord();
+        await refreshTotalVisitors();
+
+        const onlineId = getVisitorId() + '_' + Math.random().toString(36).slice(2, 8);
+        statsChannel = statsClient.channel(STATS_CONFIG.presenceChannel, {
+            config: { presence: { key: onlineId } }
+        });
+
+        statsChannel
+            .on('presence', { event: 'sync' }, refreshOnlineVisitors)
+            .on('presence', { event: 'join' }, refreshOnlineVisitors)
+            .on('presence', { event: 'leave' }, refreshOnlineVisitors);
+
+        await statsChannel.subscribe(async status => {
+            if (status === 'SUBSCRIBED') {
+                await statsChannel.track({
+                    visitor_id: onlineId,
+                    online_id: onlineId,
+                    joined_at: new Date().toISOString()
+                });
+                refreshOnlineVisitors();
+            }
+        });
+
+        statsHeartbeat = setInterval(async () => {
+            try {
+                await updateVisitorRecord();
+                await refreshTotalVisitors();
+            } catch (error) {
+                console.warn('LaySRT stats heartbeat:', error);
+            }
+        }, 5 * 60 * 1000);
+    } catch (error) {
+        console.warn('LaySRT visitor stats unavailable:', error);
+        setStatsValue(totalVisitors, NaN);
+        setStatsValue(onlineVisitors, NaN);
+    }
+}
+
+/* =========================================================
+   DEVTOOLS / ERUDA DETERRENCE
+   Đây chỉ là lớp ngăn chặn ở frontend, không phải bảo mật tuyệt đối.
+========================================================= */
+
+let devtoolsLocked = false;
+
+function lockForDevtools() {
+    if (!devtoolsBlocker || devtoolsLocked) return;
+    devtoolsLocked = true;
+    devtoolsBlocker.classList.add('active');
+    devtoolsBlocker.setAttribute('aria-hidden', 'false');
+    document.documentElement.style.overflow = 'hidden';
+}
+
+function unlockDevtools() {
+    if (!devtoolsBlocker) return;
+    devtoolsLocked = false;
+    devtoolsBlocker.classList.remove('active');
+    devtoolsBlocker.setAttribute('aria-hidden', 'true');
+    document.documentElement.style.overflow = '';
+}
+
+function erudaDetected() {
+    return Boolean(
+        window.eruda ||
+        window.Firebug ||
+        document.querySelector('.eruda-container, [class*="eruda"], [id*="eruda"]')
+    );
+}
+
+function desktopDevtoolsDetected() {
+    if (window.innerWidth <= 700 || window.innerHeight <= 450) return false;
+    const widthGap = Math.abs(window.outerWidth - window.innerWidth);
+    const heightGap = Math.abs(window.outerHeight - window.innerHeight);
+    return widthGap > 180 || heightGap > 180;
+}
+
+function checkDevtools() {
+    if (erudaDetected() || desktopDevtoolsDetected()) {
+        lockForDevtools();
+    } else if (devtoolsLocked) {
+        unlockDevtools();
+    }
+}
+
+function installDevtoolsProtection() {
+    document.addEventListener('contextmenu', event => {
+        const tag = event.target?.tagName?.toLowerCase();
+        if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+        event.preventDefault();
+    }, { capture: true });
+
+    document.addEventListener('keydown', event => {
+        const key = String(event.key || '').toLowerCase();
+        const ctrlOrMeta = event.ctrlKey || event.metaKey;
+        const blocked =
+            key === 'f12' ||
+            (ctrlOrMeta && event.shiftKey && ['i', 'j', 'c'].includes(key)) ||
+            (ctrlOrMeta && key === 'u');
+        if (blocked) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, { capture: true });
+
+    new MutationObserver(() => {
+        if (erudaDetected()) lockForDevtools();
+    }).observe(document.documentElement, { childList: true, subtree: true });
+
+    setInterval(checkDevtools, 1200);
+    window.addEventListener('resize', checkDevtools);
+    window.addEventListener('focus', checkDevtools);
+    checkDevtools();
+}
+
+/* =========================================================
    INITIALIZE
 ========================================================= */
 
@@ -7933,6 +8247,9 @@ loadPromptPreset();
 updateTranslationUI();
 
 showOriginalPreview();
+
+installDevtoolsProtection();
+initVisitorStats();
 
 </script>
 
