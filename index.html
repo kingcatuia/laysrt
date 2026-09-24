@@ -1254,7 +1254,7 @@ footer {
 <div id="devtoolsBlocker" aria-hidden="true">
     <div class="devtools-blocker-card">
         <div class="devtools-blocker-icon">🔒</div>
-        <h2>LaySRT đã chặn vì xài devtools/eruda</h2>
+        <h2>LaySRT đã tạm khóa trang</h2>
         <p>DevTools hoặc Eruda đang được phát hiện. Hãy đóng công cụ kiểm tra rồi tải lại trang để tiếp tục sử dụng.</p>
     </div>
 </div>
@@ -8075,23 +8075,29 @@ function setStatsValue(element, value) {
 
 async function updateVisitorRecord() {
     if (!statsClient) return;
+
     const visitorId = getVisitorId();
-    const { error } = await statsClient
-        .from('laysrt_visitors')
-        .upsert({
-            visitor_id: visitorId,
-            last_seen: new Date().toISOString()
-        }, { onConflict: 'visitor_id' });
+
+    const { error } = await statsClient.rpc(
+        'track_laysrt_visitor',
+        {
+            p_visitor_id: visitorId
+        }
+    );
+
     if (error) throw error;
 }
 
 async function refreshTotalVisitors() {
     if (!statsClient) return;
-    const { count, error } = await statsClient
-        .from('laysrt_visitors')
-        .select('visitor_id', { count: 'exact', head: true });
+
+    const { data, error } = await statsClient.rpc(
+        'get_laysrt_visitor_count'
+    );
+
     if (error) throw error;
-    setStatsValue(totalVisitors, count);
+
+    setStatsValue(totalVisitors, Number(data));
 }
 
 function refreshOnlineVisitors() {
