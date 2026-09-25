@@ -1254,7 +1254,7 @@ footer {
 <div id="devtoolsBlocker" aria-hidden="true">
     <div class="devtools-blocker-card">
         <div class="devtools-blocker-icon">🔒</div>
-        <h2>LaySRT đã tạm khóa trang</h2>
+        <h2>LaySRT đã chặn vì có bạn xài Devtools/Eruda</h2>
         <p>DevTools hoặc Eruda đang được phát hiện. Hãy đóng công cụ kiểm tra rồi tải lại trang để tiếp tục sử dụng.</p>
     </div>
 </div>
@@ -8167,80 +8167,197 @@ async function initVisitorStats() {
 }
 
 /* =========================================================
-   DEVTOOLS / ERUDA DETERRENCE
+   DEVTOOLS / ERUDA / DEBUGGER DETERRENCE (multi-layer)
    Đây chỉ là lớp ngăn chặn ở frontend, không phải bảo mật tuyệt đối.
+   Mục tiêu: gây khó khăn thực tế cho việc mở DevTools/Eruda để
+   xem/copy source, kết hợp nhiều lớp tín hiệu độc lập để giảm
+   false positive trên mobile và tránh bị vô hiệu hóa chỉ bằng
+   một biến gõ trong Console.
 ========================================================= */
 
-let devtoolsLocked = false;
+const installDevtoolsProtection = (function () {
 
-function lockForDevtools() {
-    if (!devtoolsBlocker || devtoolsLocked) return;
-    devtoolsLocked = true;
-    devtoolsBlocker.classList.add('active');
-    devtoolsBlocker.setAttribute('aria-hidden', 'false');
-    document.documentElement.style.overflow = 'hidden';
-}
+    // Toàn bộ state nằm trong closure — không lộ ra như một
+    // top-level let/var nên KHÔNG thể gõ trực tiếp trong Console
+    // để đọc/sửa (khác với cách cũ dùng "let devtoolsLocked").
+    let locked = false;
+    let dirtyStreak = 0;
+    let cleanStreak = 0;
+    let lastDebuggerProbe = 0;
+    let lastMutationCheck = 0;
+    let lastResizeCheck = 0;
 
-function unlockDevtools() {
-    if (!devtoolsBlocker) return;
-    devtoolsLocked = false;
-    devtoolsBlocker.classList.remove('active');
-    devtoolsBlocker.setAttribute('aria-hidden', 'true');
-    document.documentElement.style.overflow = '';
-}
+    const REQUIRED_DIRTY_TICKS = 2;
+    const REQUIRED_CLEAN_TICKS = 3;
+    const DEBUGGER_PROBE_MS = 90;
+    const DEBUGGER_PROBE_INTERVAL_MS = 2000;
+    const MUTATION_THROTTLE_MS = 400;
+    const RESIZE_THROTTLE_MS = 300;
+    const TOOL_SIGNATURE = /eruda|firebug|vconsole/i;
 
-function erudaDetected() {
-    return Boolean(
-        window.eruda ||
-        window.Firebug ||
-        document.querySelector('.eruda-container, [class*="eruda"], [id*="eruda"]')
-    );
-}
+    /* ---- Lớp 1: Eruda / Firebug / vConsole / dấu hiệu DOM / script bị chèn ---- */
+    function inspectToolDetected() {
+        if (window.eruda || window.Firebug || window.__VCONSOLE__) return true;
 
-function desktopDevtoolsDetected() {
-    if (window.innerWidth <= 700 || window.innerHeight <= 450) return false;
-    const widthGap = Math.abs(window.outerWidth - window.innerWidth);
-    const heightGap = Math.abs(window.outerHeight - window.innerHeight);
-    return widthGap > 180 || heightGap > 180;
-}
+        if (document.querySelector(
+            '.eruda-container,[class*="eruda"],[id*="eruda"],.vc-panel,[id*="vconsole"]'
+        )) return true;
 
-function checkDevtools() {
-    if (erudaDetected() || desktopDevtoolsDetected()) {
-        lockForDevtools();
-    } else if (devtoolsLocked) {
-        unlockDevtools();
-    }
-}
-
-function installDevtoolsProtection() {
-    document.addEventListener('contextmenu', event => {
-        const tag = event.target?.tagName?.toLowerCase();
-        if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
-        event.preventDefault();
-    }, { capture: true });
-
-    document.addEventListener('keydown', event => {
-        const key = String(event.key || '').toLowerCase();
-        const ctrlOrMeta = event.ctrlKey || event.metaKey;
-        const blocked =
-            key === 'f12' ||
-            (ctrlOrMeta && event.shiftKey && ['i', 'j', 'c'].includes(key)) ||
-            (ctrlOrMeta && key === 'u');
-        if (blocked) {
-            event.preventDefault();
-            event.stopPropagation();
+        const scripts = document.scripts;
+        for (let i = 0; i < scripts.length; i++) {
+            const src = scripts[i].src || '';
+            if (src && TOOL_SIGNATURE.test(src)) return true;
         }
-    }, { capture: true });
 
-    new MutationObserver(() => {
-        if (erudaDetected()) lockForDevtools();
-    }).observe(document.documentElement, { childList: true, subtree: true });
+        return false;
+    }
 
-    setInterval(checkDevtools, 1200);
-    window.addEventListener('resize', checkDevtools);
-    window.addEventListener('focus', checkDevtools);
-    checkDevtools();
-}
+    /* ---- Lớp 2: đo thời gian dừng tại statement debugger — bắt được
+       cả trường hợp remote-debug Android/Kiwi, không phụ thuộc kích
+       thước màn hình nên an toàn cho mobile ---- */
+    function debuggerPauseDetected() {
+        const now = performance.now();
+        if (now - lastDebuggerProbe < DEBUGGER_PROBE_INTERVAL_MS) return false;
+        lastDebuggerProbe = now;
+
+        const probeOnce = () => {
+            const t0 = performance.now();
+            // eslint-disable-next-line no-debugger
+            debugger;
+            return performance.now() - t0 > DEBUGGER_PROBE_MS;
+        };
+
+        // Cần 2 lần liên tiếp cùng nghi ngờ để loại trừ trễ do GC/máy yếu.
+        return probeOnce() && probeOnce();
+    }
+
+    /* ---- Lớp 3: khoảng cách outerWidth/innerWidth — CHỈ tính trên
+       desktop, và cần lặp lại vài lần liên tiếp mới đủ tin cậy để
+       khóa (chống false-positive khi resize/xoay màn hình) ---- */
+    function isDesktopViewport() {
+        return window.innerWidth > 700 && window.innerHeight > 450;
+    }
+
+    function windowGapHeuristic() {
+        const widthGap = Math.abs(window.outerWidth - window.innerWidth);
+        const heightGap = Math.abs(window.outerHeight - window.innerHeight);
+        return widthGap > 180 || heightGap > 180;
+    }
+
+    /* ---- Block/unblock trung tâm — MỌI detector đều đi qua đây,
+       không có 2 cơ chế block chạy song song ---- */
+    function blurActiveField() {
+        const el = document.activeElement;
+        if (el && el !== document.body && typeof el.blur === 'function') {
+            el.blur();
+        }
+    }
+
+    function lockForDevtools() {
+        if (!devtoolsBlocker || locked) return;
+        locked = true;
+        dirtyStreak = REQUIRED_DIRTY_TICKS;
+        cleanStreak = 0;
+
+        if (typeof translationAbortController !== 'undefined' && translationAbortController) {
+            try { translationAbortController.abort(); } catch (e) {}
+        }
+
+        blurActiveField();
+        devtoolsBlocker.classList.add('active');
+        devtoolsBlocker.setAttribute('aria-hidden', 'false');
+        document.documentElement.style.overflow = 'hidden';
+    }
+
+    function unlockDevtools() {
+        if (!devtoolsBlocker || !locked) return;
+        locked = false;
+        devtoolsBlocker.classList.remove('active');
+        devtoolsBlocker.setAttribute('aria-hidden', 'true');
+        document.documentElement.style.overflow = '';
+    }
+
+    /* ---- Chu trình kiểm tra chính — interval, resize, focus,
+       visibilitychange và mutation đều quy về đúng một hàm này ---- */
+    function runDetectionCycle() {
+        if (inspectToolDetected() || debuggerPauseDetected()) {
+            lockForDevtools();
+            return;
+        }
+
+        const weakHit = isDesktopViewport() && windowGapHeuristic();
+
+        if (weakHit) {
+            cleanStreak = 0;
+            dirtyStreak++;
+            if (dirtyStreak >= REQUIRED_DIRTY_TICKS) {
+                lockForDevtools();
+            }
+        } else {
+            dirtyStreak = 0;
+            cleanStreak++;
+            if (locked && cleanStreak >= REQUIRED_CLEAN_TICKS) {
+                unlockDevtools();
+            }
+        }
+    }
+
+    function scheduleMutationCheck() {
+        const now = performance.now();
+        if (now - lastMutationCheck < MUTATION_THROTTLE_MS) return;
+        lastMutationCheck = now;
+        if (inspectToolDetected()) lockForDevtools();
+    }
+
+    function throttledResizeCheck() {
+        const now = performance.now();
+        if (now - lastResizeCheck < RESIZE_THROTTLE_MS) return;
+        lastResizeCheck = now;
+        runDetectionCycle();
+    }
+
+    function bindStaticGuards() {
+        document.addEventListener('contextmenu', event => {
+            const tag = event.target?.tagName?.toLowerCase();
+            if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+            event.preventDefault();
+        }, { capture: true });
+
+        document.addEventListener('keydown', event => {
+            const key = String(event.key || '').toLowerCase();
+            const ctrlOrMeta = event.ctrlKey || event.metaKey;
+            const blocked =
+                key === 'f12' ||
+                (ctrlOrMeta && event.shiftKey && ['i', 'j', 'c'].includes(key)) ||
+                (ctrlOrMeta && key === 'u');
+            if (blocked) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        }, { capture: true });
+    }
+
+    function bindDynamicChecks() {
+        new MutationObserver(scheduleMutationCheck)
+            .observe(document.documentElement, { childList: true, subtree: true });
+
+        window.addEventListener('resize', throttledResizeCheck);
+        window.addEventListener('focus', runDetectionCycle);
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) runDetectionCycle();
+        });
+
+        setInterval(runDetectionCycle, 1500);
+    }
+
+    return function start() {
+        bindStaticGuards();
+        bindDynamicChecks();
+        runDetectionCycle();
+    };
+
+})();
 
 /* =========================================================
    INITIALIZE
