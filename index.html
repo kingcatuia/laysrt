@@ -1864,48 +1864,31 @@ footer {
                     Model Gemini
                 </label>
 
-                <select id="geminiModel">
+                <input
+                    id="geminiModel"
+                    list="geminiModelList"
+                    value="gemini-3.8-flash"
+                    placeholder="vd: gemini-3.8-flash"
+                    autocomplete="off"
+                >
 
-                    <option
-                        value="gemini-3.8-flash"
-                        selected
-                    >
-                        Gemini 3.8 Flash
-                    </option>
+                <datalist id="geminiModelList">
 
-                    <option value="gemini-3.7-flash">
-                        Gemini 3.7 Flash
-                    </option>
+                    <option value="gemini-3.8-flash">Gemini 3.8 Flash — mới nhất</option>
+                    <option value="gemini-3.7-flash">Gemini 3.7 Flash</option>
+                    <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
+                    <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
+                    <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite — rẻ nhất</option>
+                    <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite</option>
+                    <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
+                    <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                    <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
 
-                    <option value="gemini-3.6-flash">
-                        Gemini 3.6 Flash
-                    </option>
+                </datalist>
 
-                    <option value="gemini-3.5-flash">
-                        Gemini 3.5 Flash
-                    </option>
-
-                    <option value="gemini-3.5-flash-lite">
-                        Gemini 3.5 Flash-Lite
-                    </option>
-
-                    <option value="gemini-3.1-flash-lite">
-                        Gemini 3.1 Flash-Lite
-                    </option>
-
-                    <option value="gemini-3.1-pro-preview">
-                        Gemini 3.1 Pro Preview
-                    </option>
-
-                    <option value="gemini-2.5-flash">
-                        Gemini 2.5 Flash
-                    </option>
-
-                    <option value="gemini-2.5-pro">
-                        Gemini 2.5 Pro
-                    </option>
-
-                </select>
+                <div class="api-help">
+                    Gõ tên model Gemini bất kỳ (kể cả bản mới ra sau này) — danh sách trên chỉ là gợi ý.
+                </div>
 
             </div>
 
@@ -1920,6 +1903,10 @@ footer {
 
                     <option value="auto">
                         Tự động theo độ chính xác
+                    </option>
+
+                    <option value="minimal">
+                        Minimal
                     </option>
 
                     <option value="low">
@@ -1982,24 +1969,27 @@ footer {
                     Model Groq
                 </label>
 
-                <select id="groqModel">
+                <input
+                    id="groqModel"
+                    list="groqModelList"
+                    value="openai/gpt-oss-120b"
+                    placeholder="vd: openai/gpt-oss-120b"
+                    autocomplete="off"
+                >
 
-                    <option
-                        value="openai/gpt-oss-120b"
-                        selected
-                    >
-                        GPT-OSS 120B
-                    </option>
+                <datalist id="groqModelList">
 
-                    <option value="openai/gpt-oss-20b">
-                        GPT-OSS 20B
-                    </option>
+                    <option value="openai/gpt-oss-120b">GPT-OSS 120B</option>
+                    <option value="openai/gpt-oss-20b">GPT-OSS 20B</option>
+                    <option value="qwen/qwen3-32b">Qwen3 32B</option>
+                    <option value="qwen-qwq-32b">Qwen QwQ 32B</option>
+                    <option value="deepseek-r1-distill-llama-70b">DeepSeek R1 Distill Llama 70B</option>
 
-                    <option value="qwen/qwen3.8-27b">
-                        Qwen 3.8 27B
-                    </option>
+                </datalist>
 
-                </select>
+                <div class="api-help">
+                    Xem danh sách model Groq mới nhất tại console.groq.com/docs/models.
+                </div>
 
             </div>
 
@@ -2042,20 +2032,21 @@ footer {
                     Model DeepSeek
                 </label>
 
-                <select id="deepseekModel">
+                <input
+                    id="deepseekModel"
+                    list="deepseekModelList"
+                    value="deepseek-flash"
+                    placeholder="vd: deepseek-flash"
+                    autocomplete="off"
+                >
 
-                    <option
-                        value="deepseek-v4-flash"
-                        selected
-                    >
-                        DeepSeek V4 Flash
-                    </option>
+                <datalist id="deepseekModelList">
 
-                    <option value="deepseek-v4-pro">
-                        DeepSeek V4 Pro
-                    </option>
+                    <option value="deepseek-flash">DeepSeek V4.1 Flash</option>
+                    <option value="deepseek-v4-flash">DeepSeek V4 Flash (tên cũ)</option>
+                    <option value="deepseek-v4-pro">DeepSeek V4 Pro</option>
 
-                </select>
+                </datalist>
 
             </div>
 
@@ -2131,28 +2122,28 @@ footer {
                     Model OpenAI
                 </label>
 
-                <select id="openaiModel">
+                <input
+                    id="openaiModel"
+                    list="openaiModelList"
+                    value="gpt-5.6-luna"
+                    placeholder="vd: gpt-5.6-luna"
+                    autocomplete="off"
+                >
 
-                    <option
-                        value="gpt-5.6-luna"
-                        selected
-                    >
-                        GPT-5.6 Luna
-                    </option>
+                <datalist id="openaiModelList">
 
-                    <option value="gpt-5.6-terra">
-                        GPT-5.6 Terra
-                    </option>
+                    <option value="gpt-6-astra">GPT-6 Astra — mạnh nhất (mới)</option>
+                    <option value="gpt-6-sol">GPT-6 Sol (mới)</option>
+                    <option value="gpt-6-luna">GPT-6 Luna — rẻ nhất (mới)</option>
+                    <option value="gpt-5.6-sol">GPT-5.6 Sol</option>
+                    <option value="gpt-5.6-terra">GPT-5.6 Terra</option>
+                    <option value="gpt-5.6-luna">GPT-5.6 Luna — rẻ</option>
 
-                    <option value="gpt-5.6-sol">
-                        GPT-5.6 Sol
-                    </option>
+                </datalist>
 
-                    <option value="gpt-5.6">
-                        GPT-5.6
-                    </option>
-
-                </select>
+                <div class="api-help">
+                    OpenAI vừa ra mắt GPT-6 (Astra/Sol/Luna); GPT-5.6 vẫn dùng được.
+                </div>
 
             </div>
 
@@ -2173,6 +2164,10 @@ footer {
                         None
                     </option>
 
+                    <option value="minimal">
+                        Minimal
+                    </option>
+
                     <option value="low">
                         Low
                     </option>
@@ -2183,6 +2178,10 @@ footer {
 
                     <option value="high">
                         High
+                    </option>
+
+                    <option value="xhigh">
+                        X-High
                     </option>
 
                     <option value="max">
@@ -2467,6 +2466,15 @@ footer {
             disabled
         >
             🌐 Bắt đầu dịch
+        </button>
+
+
+        <button
+            id="stopTranslateBtn"
+            type="button"
+            class="btn-danger hidden"
+        >
+            ⛔ Dừng dịch
         </button>
 
 
@@ -2822,6 +2830,9 @@ const clearMemoryBtn =
 
 const translateBtn =
     $('translateBtn');
+
+const stopTranslateBtn =
+    $('stopTranslateBtn');
 
 const downloadOriginalBtn =
     $('downloadOriginalBtn');
@@ -3625,7 +3636,7 @@ function getAccuracyConfig() {
         fast: {
 
             thinking:
-                'low',
+                'minimal',
 
             temperature:
                 0.25,
@@ -3888,14 +3899,39 @@ function showStatus(
    SLEEP
 ========================================================= */
 
-function sleep(ms) {
+function sleep(ms, signal) {
 
     return new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                ms
-            )
+        (resolve, reject) => {
+
+            const timer =
+                setTimeout(
+                    resolve,
+                    ms
+                );
+
+            if (signal) {
+
+                signal.addEventListener(
+                    'abort',
+                    () => {
+
+                        clearTimeout(timer);
+
+                        reject(
+                            new DOMException(
+                                'Aborted',
+                                'AbortError'
+                            )
+                        );
+
+                    },
+                    { once: true }
+                );
+
+            }
+
+        }
     );
 
 }
@@ -3919,9 +3955,11 @@ async function fetchWithRetry(
         attempt++
     ) {
 
+        let response = null;
+
         try {
 
-            const response =
+            response =
                 await fetch(
                     url,
                     {
@@ -3930,45 +3968,6 @@ async function fetchWithRetry(
                             translationAbortController
                                 ?.signal
                     }
-                );
-
-            if (
-                response.ok
-            ) {
-                return response;
-            }
-
-            let message =
-                'HTTP ' +
-                response.status;
-
-            try {
-
-                const errorData =
-                    await response.json();
-
-                message =
-                    errorData?.error?.message ||
-                    errorData?.error?.code ||
-                    message;
-
-            } catch {}
-
-            const retryable =
-                response.status === 408 ||
-                response.status === 409 ||
-                response.status === 429 ||
-                response.status >= 500;
-
-            if (!retryable) {
-                throw new Error(
-                    message
-                );
-            }
-
-            lastError =
-                new Error(
-                    message
                 );
 
         } catch (error) {
@@ -3983,14 +3982,75 @@ async function fetchWithRetry(
             lastError =
                 error;
 
+            await sleep(
+                700 *
+                Math.pow(
+                    2,
+                    attempt
+                ),
+                translationAbortController
+                    ?.signal
+            );
+
+            continue;
+
         }
+
+        if (
+            response.ok
+        ) {
+            return response;
+        }
+
+        let message =
+            'HTTP ' +
+            response.status;
+
+        try {
+
+            const errorData =
+                await response.json();
+
+            message =
+                errorData?.error?.message ||
+                errorData?.error?.code ||
+                message;
+
+        } catch {}
+
+        const retryable =
+            response.status === 408 ||
+            response.status === 409 ||
+            response.status === 429 ||
+            response.status >= 500;
+
+        // Lỗi không đáng để thử lại (vd: 400/401/403/404 — sai API
+        // key, sai tên model, tham số không hợp lệ...) phải thoát
+        // NGAY, không được rơi vào nhánh catch bên dưới rồi lặp lại
+        // y hệt 3 lần (trước đây bị lỗi này, vừa tốn ~5 giây vừa
+        // khiến cơ chế thử-lại-bỏ-tham-số ở compatibleTranslateBatch
+        // không bao giờ có cơ hội chạy).
+        if (!retryable) {
+
+            throw new Error(
+                message
+            );
+
+        }
+
+        lastError =
+            new Error(
+                message
+            );
 
         await sleep(
             700 *
             Math.pow(
                 2,
                 attempt
-            )
+            ),
+            translationAbortController
+                ?.signal
         );
 
     }
@@ -5420,18 +5480,7 @@ function updateTranslationUI() {
         previewTranslatedBtn.disabled =
             true;
 
-        learnEditedBtn.disabled =
-            true;
-
-        preview.value =
-            originalSrt;
-
-        preview.readOnly =
-            true;
-
-        saveEditedPreviewBtn.classList.add(
-            'hidden'
-        );
+        showOriginalPreview();
 
     }
 
@@ -5774,6 +5823,17 @@ function getGeminiConfig(
         )
     ) {
 
+        // Gemini 3 Pro models chỉ hỗ trợ 2 mức low/high
+        // (Flash mới hỗ trợ đủ minimal/low/medium/high).
+        if (
+            model.includes('pro') &&
+            thinking !== 'high'
+        ) {
+
+            thinking = 'low';
+
+        }
+
         return {
 
             thinkingConfig: {
@@ -5956,84 +6016,129 @@ async function compatibleTranslateBatch(
             items
         );
 
-    const body = {
-
-        model:
-            config.model,
-
-        messages: [
-
-            {
-
-                role:
-                    'system',
-
-                content:
-                    'Bạn là chuyên gia dịch phụ đề phim. Hãy tuân thủ tuyệt đối định dạng JSON và các quy tắc dịch được cung cấp.'
-
-            },
-
-            {
-
-                role:
-                    'user',
-
-                content:
-                    prompt
-
-            }
-
-        ],
-
-        max_tokens:
-            Math.min(
-                60000,
-                Math.max(
-                    1600,
-                    items.length *
-                    140
-                )
+    const tokenLimit =
+        Math.min(
+            60000,
+            Math.max(
+                1600,
+                items.length *
+                140
             )
+        );
 
-    };
+    // Xây body theo từng lần thử — opts cho phép lần thử lại
+    // (fallback) bỏ bớt các tham số mà model/provider không hỗ trợ,
+    // thay vì làm hỏng luôn cả lượt dịch.
+    function buildBody(opts) {
 
+        const body = {
 
-    if (
-        config.temperature !==
-        undefined
-    ) {
+            model:
+                config.model,
 
-        body.temperature =
-            config.temperature;
+            messages: [
+
+                {
+
+                    role:
+                        'system',
+
+                    content:
+                        'Bạn là chuyên gia dịch phụ đề phim. Hãy tuân thủ tuyệt đối định dạng JSON và các quy tắc dịch được cung cấp.'
+
+                },
+
+                {
+
+                    role:
+                        'user',
+
+                    content:
+                        prompt
+
+                }
+
+            ]
+
+        };
+
+        // Các model reasoning thật của OpenAI (Chat Completions) chỉ
+        // chấp nhận max_completion_tokens, không phải max_tokens.
+        if (config.useMaxCompletionTokens) {
+
+            body.max_completion_tokens =
+                tokenLimit;
+
+        } else {
+
+            body.max_tokens =
+                tokenLimit;
+
+        }
+
+        if (
+            config.temperature !== undefined &&
+            !opts.dropTemperature
+        ) {
+
+            body.temperature =
+                config.temperature;
+
+        }
+
+        if (
+            config.reasoning_effort &&
+            !opts.dropReasoning
+        ) {
+
+            body.reasoning_effort =
+                config.reasoning_effort;
+
+        }
+
+        if (config.responseFormat) {
+
+            body.response_format =
+                {
+                    type:
+                        'json_object'
+                };
+
+        }
+
+        return body;
 
     }
 
+    function looksLikeUnsupportedParamError(message) {
 
-    if (
-        config.reasoning_effort
-    ) {
+        message =
+            String(message || '').toLowerCase();
 
-        body.reasoning_effort =
-            config.reasoning_effort;
+        return (
+            message.includes('reasoning_effort') ||
+            message.includes('reasoning.effort') ||
+            message.includes('temperature') ||
+            (
+                message.includes('unsupported') &&
+                (
+                    message.includes('parameter') ||
+                    message.includes('value')
+                )
+            ) ||
+            message.includes('unknown parameter') ||
+            message.includes('unrecognized request argument') ||
+            (
+                message.includes('invalid') &&
+                message.includes('effort')
+            )
+        );
 
     }
 
+    function callApi(opts) {
 
-    if (
-        config.responseFormat
-    ) {
-
-        body.response_format =
-            {
-                type:
-                    'json_object'
-            };
-
-    }
-
-
-    const response =
-        await fetchWithRetry(
+        return fetchWithRetry(
             config.endpoint,
             {
 
@@ -6057,12 +6162,51 @@ async function compatibleTranslateBatch(
 
                 body:
                     JSON.stringify(
-                        body
+                        buildBody(opts)
                     )
 
             },
             3
         );
+
+    }
+
+    let response;
+
+    try {
+
+        response =
+            await callApi({});
+
+    } catch (error) {
+
+        const hasOptionalParams =
+            Boolean(config.reasoning_effort) ||
+            config.temperature !== undefined;
+
+        // Nếu model/provider từ chối reasoning_effort hoặc
+        // temperature (tuỳ model, tuỳ thời điểm — các hãng đổi
+        // liên tục), thử lại đúng 1 lần mà không có 2 tham số đó
+        // thay vì làm cả lượt (và cả các dòng khác trong lượt) lỗi.
+        if (
+            error?.name !== 'AbortError' &&
+            hasOptionalParams &&
+            looksLikeUnsupportedParamError(error?.message)
+        ) {
+
+            response =
+                await callApi({
+                    dropReasoning: true,
+                    dropTemperature: true
+                });
+
+        } else {
+
+            throw error;
+
+        }
+
+    }
 
 
     const data =
@@ -6180,6 +6324,11 @@ async function translateAIBatch(
                 temperature:
                     accuracy.temperature,
 
+                reasoning_effort:
+                    accuracy.reasoning === 'max'
+                        ? 'high'
+                        : accuracy.reasoning,
+
                 responseFormat:
                     true
 
@@ -6286,6 +6435,9 @@ async function translateAIBatch(
 
                 reasoning_effort:
                     reasoning,
+
+                useMaxCompletionTokens:
+                    true,
 
                 responseFormat:
                     true
@@ -6497,6 +6649,13 @@ async function translateSubtitles() {
     learnEditedBtn.disabled =
         true;
 
+    stopTranslateBtn.disabled =
+        false;
+
+    stopTranslateBtn.classList.remove(
+        'hidden'
+    );
+
     progressWrapper.classList.remove(
         'hidden'
     );
@@ -6506,6 +6665,14 @@ async function translateSubtitles() {
 
     progressText.textContent =
         'Đang chuẩn bị...';
+
+    // wasAborted: người dùng bấm "Dừng dịch".
+    // fatalError: nhiều lượt/dòng liên tiếp lỗi — dừng sớm thay vì
+    // tiếp tục gọi API thất bại hàng loạt, tốn quota vô ích.
+    // Dù dừng vì lý do gì, những dòng đã dịch được trước đó vẫn
+    // được giữ lại thay vì mất trắng như trước.
+    let wasAborted = false;
+    let fatalError = null;
 
     try {
 
@@ -6528,6 +6695,9 @@ async function translateSubtitles() {
             method === 'google'
         ) {
 
+            let consecutiveFailures =
+                0;
+
             for (
                 let i = 0;
                 i < subtitles.length;
@@ -6544,12 +6714,62 @@ async function translateSubtitles() {
                     'warning'
                 );
 
-                translatedTexts[i] =
-                    await googleTranslate(
-                        subtitles[i].text,
-                        source,
-                        target
-                    );
+                try {
+
+                    translatedTexts[i] =
+                        await googleTranslate(
+                            subtitles[i].text,
+                            source,
+                            target
+                        );
+
+                    consecutiveFailures =
+                        0;
+
+                    if (
+                        i <
+                        subtitles.length - 1
+                    ) {
+
+                        // Nghỉ một chút giữa các dòng để giảm nguy cơ
+                        // bị Google giới hạn tốc độ khi file rất dài.
+                        await sleep(
+                            60,
+                            translationAbortController
+                                ?.signal
+                        );
+
+                    }
+
+                } catch (error) {
+
+                    if (
+                        error?.name ===
+                        'AbortError'
+                    ) {
+
+                        wasAborted =
+                            true;
+
+                        break;
+
+                    }
+
+                    consecutiveFailures++;
+
+                    if (
+                        consecutiveFailures >=
+                        5
+                    ) {
+
+                        fatalError =
+                            error;
+
+                        break;
+
+                    }
+
+                }
 
                 const percent =
                     Math.round(
@@ -6599,6 +6819,28 @@ async function translateSubtitles() {
                     size
                 );
 
+            let consecutiveFailures =
+                0;
+
+            const providerName = {
+
+                gemini:
+                    'Gemini',
+
+                groq:
+                    'Groq',
+
+                deepseek:
+                    'DeepSeek',
+
+                openai:
+                    'OpenAI',
+
+                openrouter:
+                    'OpenRouter'
+
+            }[method];
+
             for (
                 let batchIndex = 0;
                 batchIndex < total;
@@ -6632,26 +6874,6 @@ async function translateSubtitles() {
                         })
                     );
 
-                const providerName = {
-
-                    gemini:
-                        'Gemini',
-
-                    groq:
-                        'Groq',
-
-                    deepseek:
-                        'DeepSeek',
-
-                    openai:
-                        'OpenAI',
-
-                    openrouter:
-                        'OpenRouter'
-
-                }[method];
-
-
                 showStatus(
                     translationStatus,
 
@@ -6668,47 +6890,100 @@ async function translateSubtitles() {
                     'warning'
                 );
 
+                try {
 
-                const result =
-                    await translateAIBatch(
-                        input,
-                        method
-                    );
+                    const result =
+                        await translateAIBatch(
+                            input,
+                            method
+                        );
 
+                    const count =
+                        applyAITranslations(
+                            translatedTexts,
+                            result,
+                            input.map(
+                                item =>
+                                    item.id
+                            )
+                        );
 
-                const count =
-                    applyAITranslations(
-                        translatedTexts,
-                        result,
-                        input.map(
-                            item =>
-                                item.id
-                        )
-                    );
+                    if (
+                        count <
+                        input.length
+                    ) {
 
+                        showStatus(
+                            translationStatus,
 
-                if (
-                    count <
-                    input.length
-                ) {
+                            '⚠️ ' +
+                            providerName +
+                            ' trả thiếu ' +
+                            (
+                                input.length -
+                                count
+                            ) +
+                            ' dòng ở lượt này. Các dòng thiếu sẽ giữ nguyên.',
+
+                            'warning'
+                        );
+
+                    }
+
+                    consecutiveFailures =
+                        0;
+
+                } catch (error) {
+
+                    if (
+                        error?.name ===
+                        'AbortError'
+                    ) {
+
+                        wasAborted =
+                            true;
+
+                        break;
+
+                    }
+
+                    consecutiveFailures++;
 
                     showStatus(
                         translationStatus,
 
-                        '⚠️ ' +
-                        providerName +
-                        ' trả thiếu ' +
+                        '⚠️ Lượt ' +
+                        (batchIndex + 1) +
+                        '/' +
+                        total +
+                        ' lỗi (' +
                         (
-                            input.length -
-                            count
+                            error?.message ||
+                            'không xác định'
                         ) +
-                        ' dòng ở lượt này. Các dòng thiếu sẽ giữ nguyên.',
+                        ') — giữ nguyên bản gốc cho ' +
+                        batch.length +
+                        ' dòng này.',
 
                         'warning'
                     );
 
-                }
+                    // 2 lượt liên tiếp cùng lỗi thường là do sai API
+                    // key / tên model chứ không phải trục trặc tạm
+                    // thời — dừng sớm thay vì lặp lại lỗi cho hết file.
+                    if (
+                        consecutiveFailures >=
+                        2
+                    ) {
 
+                        fatalError =
+                            error;
+
+                        break;
+
+                    }
+
+                }
 
                 const percent =
                     Math.round(
@@ -6833,6 +7108,30 @@ async function translateSubtitles() {
 
 
         /* =================================================
+           ĐẾM SỐ DÒNG CHƯA DỊCH ĐƯỢC (trước khi fallback)
+        ================================================== */
+
+        let missingCount =
+            0;
+
+        for (
+            let i = 0;
+            i < subtitles.length;
+            i++
+        ) {
+
+            if (
+                !translatedTexts[i]
+            ) {
+
+                missingCount++;
+
+            }
+
+        }
+
+
+        /* =================================================
            FALLBACK
         ================================================== */
 
@@ -6855,7 +7154,9 @@ async function translateSubtitles() {
 
 
         /* =================================================
-           OUTPUT
+           OUTPUT — luôn ghép SRT từ những gì đã dịch được,
+           kể cả khi bị dừng giữa chừng hoặc có lỗi, thay vì
+           mất hết nếu có sự cố ở giữa file dài.
         ================================================== */
 
         const translated =
@@ -6906,21 +7207,102 @@ async function translateSubtitles() {
             'hidden'
         );
 
-        progressFill.style.width =
-            '100%';
 
-        progressText.textContent =
-            '100% — Hoàn thành';
+        /* =================================================
+           STATUS — builtin đã tự báo trạng thái riêng ở trên.
+        ================================================== */
 
-        showStatus(
-            translationStatus,
+        if (
+            method !== 'builtin'
+        ) {
 
-            '✅ Đã dịch xong ' +
-            subtitles.length +
-            ' dòng. Ông có thể sửa trực tiếp rồi cho web học.',
+            if (
+                wasAborted
+            ) {
 
-            'success'
-        );
+                progressText.textContent =
+                    'Đã dừng';
+
+                showStatus(
+                    translationStatus,
+
+                    '⛔ Đã dừng dịch.' +
+                    (
+                        missingCount > 0
+                            ? ' Đã giữ bản dịch cho các dòng hoàn thành, ' +
+                              missingCount +
+                              ' dòng còn lại giữ nguyên bản gốc.'
+                            : ' Đã dịch xong trước khi dừng.'
+                    ),
+
+                    'warning'
+                );
+
+            } else if (
+                fatalError
+            ) {
+
+                progressText.textContent =
+                    'Dừng do lỗi lặp lại';
+
+                showStatus(
+                    translationStatus,
+
+                    '❌ Dừng dịch sớm do lỗi lặp lại nhiều lần (' +
+                    (
+                        fatalError?.message ||
+                        'không xác định'
+                    ) +
+                    '). Đã giữ bản dịch cho các dòng hoàn thành, ' +
+                    missingCount +
+                    '/' +
+                    subtitles.length +
+                    ' dòng còn lại giữ nguyên bản gốc — kiểm tra lại API key / tên model rồi dịch lại nếu cần.',
+
+                    'error'
+                );
+
+            } else if (
+                missingCount > 0
+            ) {
+
+                progressFill.style.width =
+                    '100%';
+
+                progressText.textContent =
+                    '100% — Hoàn thành (có lỗi)';
+
+                showStatus(
+                    translationStatus,
+
+                    '✅ Đã dịch xong nhưng ' +
+                    missingCount +
+                    ' dòng bị lỗi và giữ nguyên bản gốc. Ông có thể sửa trực tiếp rồi cho web học.',
+
+                    'warning'
+                );
+
+            } else {
+
+                progressFill.style.width =
+                    '100%';
+
+                progressText.textContent =
+                    '100% — Hoàn thành';
+
+                showStatus(
+                    translationStatus,
+
+                    '✅ Đã dịch xong ' +
+                    subtitles.length +
+                    ' dòng. Ông có thể sửa trực tiếp rồi cho web học.',
+
+                    'success'
+                );
+
+            }
+
+        }
 
     } catch (
         error
@@ -6960,6 +7342,10 @@ async function translateSubtitles() {
 
         translationAbortController =
             null;
+
+        stopTranslateBtn.classList.add(
+            'hidden'
+        );
 
         updateTranslationUI();
 
@@ -7991,6 +8377,31 @@ convertBtn.addEventListener(
 translateBtn.addEventListener(
     'click',
     translateSubtitles
+);
+
+
+stopTranslateBtn.addEventListener(
+    'click',
+    () => {
+
+        if (
+            !translationAbortController
+        ) {
+            return;
+        }
+
+        translationAbortController.abort();
+
+        stopTranslateBtn.disabled =
+            true;
+
+        showStatus(
+            translationStatus,
+            '⏳ Đang dừng dịch...',
+            'warning'
+        );
+
+    }
 );
 
 
