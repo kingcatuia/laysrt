@@ -45,6 +45,9 @@ html {
 body {
     margin: 0;
     padding: 14px;
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
     background: var(--bg);
     color: var(--text);
 
@@ -54,6 +57,7 @@ body {
         sans-serif;
 
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
 .container {
@@ -1135,6 +1139,10 @@ footer {
     body {
         padding:
             8px;
+
+        padding-left: max(8px, env(safe-area-inset-left));
+        padding-right: max(8px, env(safe-area-inset-right));
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
     }
 
     header {
@@ -1847,6 +1855,9 @@ footer {
             type="password"
             placeholder="Dán Gemini API Key..."
             autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
         >
 
 
@@ -1870,6 +1881,9 @@ footer {
                     value="gemini-3.8-flash"
                     placeholder="vd: gemini-3.8-flash"
                     autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
                 >
 
                 <datalist id="geminiModelList">
@@ -1953,6 +1967,9 @@ footer {
             type="password"
             placeholder="Dán Groq API Key..."
             autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
         >
 
 
@@ -1975,6 +1992,9 @@ footer {
                     value="openai/gpt-oss-120b"
                     placeholder="vd: openai/gpt-oss-120b"
                     autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
                 >
 
                 <datalist id="groqModelList">
@@ -2021,6 +2041,9 @@ footer {
             type="password"
             placeholder="Dán DeepSeek API Key..."
             autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
         >
 
 
@@ -2038,6 +2061,9 @@ footer {
                     value="deepseek-flash"
                     placeholder="vd: deepseek-flash"
                     autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
                 >
 
                 <datalist id="deepseekModelList">
@@ -2111,6 +2137,9 @@ footer {
             type="password"
             placeholder="Dán OpenAI API Key..."
             autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
         >
 
 
@@ -2128,6 +2157,9 @@ footer {
                     value="gpt-5.6-luna"
                     placeholder="vd: gpt-5.6-luna"
                     autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
                 >
 
                 <datalist id="openaiModelList">
@@ -2220,6 +2252,9 @@ footer {
             type="password"
             placeholder="Dán OpenRouter API Key..."
             autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
         >
 
 
@@ -2236,6 +2271,9 @@ footer {
                     value="openrouter/free"
                     placeholder="Ví dụ: openrouter/free"
                     autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
                 >
 
             </div>
@@ -2639,8 +2677,14 @@ let translationRunning = false;
 
 let translationAbortController = null;
 
+// Bản dịch gốc của máy/AI (đã chuẩn hóa) — mốc để "Học từ bản dịch đã sửa" không bị mất
+// khi người dùng bấm Lưu thay đổi hoặc tải file.
+let translatedBaseline = [];
+
 const MEMORY_KEY =
     'laysrt_translation_memory_v2';
+
+const SETTINGS_KEY = 'laysrt_settings_v1';
 
 /* =========================================================
    PUBLIC VISITOR STATS CONFIG
@@ -3713,69 +3757,81 @@ function loadPromptPreset() {
 }
 
 
-function getMemoryExamples(limit = 20) {
+// Chọn tối đa `limit` ví dụ từ bộ nhớ: ưu tiên các ví dụ có câu nguồn
+// xuất hiện trong lượt đang dịch (liên quan nhất), sau đó mới lấy các
+// ví dụ mới nhất để đủ số lượng.
+function getMemoryExamples(limit = 20, items = []) {
 
-    return translationMemory
-        .slice(-limit)
-        .map(
-            item =>
-                ({
-                    source:
-                        item.source,
+    const haystack =
+        (Array.isArray(items) ? items : [])
+            .map(item => String(item && item.text != null ? item.text : ''))
+            .join('\n');
 
-                    target:
-                        item.target
-                })
-        );
+    const picked = [];
+
+    const pickedIndexes = new Set();
+
+    if (haystack) {
+
+        for (
+            let i = translationMemory.length - 1;
+            i >= 0 && picked.length < limit;
+            i--
+        ) {
+
+            const entry = translationMemory[i];
+
+            if (entry.source && haystack.includes(entry.source)) {
+
+                picked.push(entry);
+
+                pickedIndexes.add(i);
+
+            }
+
+        }
+
+    }
+
+    for (
+        let i = translationMemory.length - 1;
+        i >= 0 && picked.length < limit;
+        i--
+    ) {
+
+        if (!pickedIndexes.has(i)) {
+            picked.push(translationMemory[i]);
+        }
+
+    }
+
+    return picked
+        .reverse()
+        .map(entry => ({
+            source: entry.source,
+            target: entry.target
+        }));
 
 }
 
 
 function buildAIPrompt(items) {
 
-    let instructions =
-        customPrompt.value.trim();
+    let instructions = customPrompt.value.trim();
 
     if (!instructions) {
-        instructions =
-            PROMPT_PRESETS.natural;
+        instructions = PROMPT_PRESETS.natural;
     }
 
     instructions =
         instructions
-            .replaceAll(
-                '{{SOURCE_LANGUAGE}}',
-                languageName(
-                    sourceLanguage.value
-                )
-            )
-            .replaceAll(
-                '{{TARGET_LANGUAGE}}',
-                languageName(
-                    targetLanguage.value
-                )
-            )
-            .replaceAll(
-                '{{TRANSLATION_MODE}}',
-                modeName(
-                    translationMode.value
-                )
-            )
-            .replaceAll(
-                '{{STYLE}}',
-                styleName(
-                    translationStyle.value
-                )
-            )
-            .replaceAll(
-                '{{ACCURACY}}',
-                accuracyName(
-                    accuracyLevel.value
-                )
-            );
+            .replaceAll('{{SOURCE_LANGUAGE}}', languageName(sourceLanguage.value))
+            .replaceAll('{{TARGET_LANGUAGE}}', languageName(targetLanguage.value))
+            .replaceAll('{{TRANSLATION_MODE}}', modeName(translationMode.value))
+            .replaceAll('{{STYLE}}', styleName(translationStyle.value))
+            .replaceAll('{{ACCURACY}}', accuracyName(accuracyLevel.value));
 
-    const memory =
-        getMemoryExamples(20);
+    const memory = getMemoryExamples(20, items);
 
     let memoryText = '';
 
@@ -3789,11 +3845,7 @@ Các ví dụ dưới đây là bản dịch đã được người dùng chỉn
 Hãy dùng chúng làm ví dụ về cách chọn từ, xưng hô, thuật ngữ và văn phong.
 Không được sao chép máy móc nếu ngữ cảnh mới khác.
 
-${JSON.stringify(
-    memory,
-    null,
-    2
-)}
+${JSON.stringify(memory)}
 
 `;
     }
@@ -3842,11 +3894,7 @@ QUY TẮC OUTPUT:
 
 DỮ LIỆU:
 
-${JSON.stringify(
-    items,
-    null,
-    2
-)}
+${JSON.stringify(items)}
 
 FORMAT BẮT BUỘC:
 
@@ -3901,38 +3949,39 @@ function showStatus(
 
 function sleep(ms, signal) {
 
-    return new Promise(
-        (resolve, reject) => {
+    return new Promise((resolve, reject) => {
 
-            const timer =
-                setTimeout(
-                    resolve,
-                    ms
-                );
+        if (signal && signal.aborted) {
 
-            if (signal) {
+            reject(new DOMException('Aborted', 'AbortError'));
 
-                signal.addEventListener(
-                    'abort',
-                    () => {
-
-                        clearTimeout(timer);
-
-                        reject(
-                            new DOMException(
-                                'Aborted',
-                                'AbortError'
-                            )
-                        );
-
-                    },
-                    { once: true }
-                );
-
-            }
+            return;
 
         }
-    );
+
+        const onAbort = () => {
+
+            clearTimeout(timer);
+
+            reject(new DOMException('Aborted', 'AbortError'));
+
+        };
+
+        const timer = setTimeout(() => {
+
+            if (signal) {
+                signal.removeEventListener('abort', onAbort);
+            }
+
+            resolve();
+
+        }, ms);
+
+        if (signal) {
+            signal.addEventListener('abort', onAbort, { once: true });
+        }
+
+    });
 
 }
 
@@ -3944,122 +3993,135 @@ function sleep(ms, signal) {
 async function fetchWithRetry(
     url,
     options,
-    attempts = 3
+    attempts = 3,
+    timeoutMs = 240000
 ) {
+
+    const outer =
+        translationAbortController
+            ? translationAbortController.signal
+            : null;
 
     let lastError = null;
 
-    for (
-        let attempt = 0;
-        attempt < attempts;
-        attempt++
-    ) {
+    for (let attempt = 0; attempt < attempts; attempt++) {
+
+        if (outer && outer.aborted) {
+            throw new DOMException('Aborted', 'AbortError');
+        }
+
+        const controller = new AbortController();
+
+        const onOuterAbort = () => controller.abort();
+
+        if (outer) {
+            outer.addEventListener('abort', onOuterAbort, { once: true });
+        }
+
+        let timedOut = false;
+
+        const timer = setTimeout(() => {
+
+            timedOut = true;
+
+            controller.abort();
+
+        }, timeoutMs);
 
         let response = null;
 
         try {
 
-            response =
-                await fetch(
-                    url,
-                    {
-                        ...options,
-                        signal:
-                            translationAbortController
-                                ?.signal
-                    }
-                );
+            response = await fetch(
+                url,
+                {
+                    ...options,
+                    signal: controller.signal
+                }
+            );
 
         } catch (error) {
 
-            if (
-                error?.name ===
-                'AbortError'
-            ) {
-                throw error;
+            // Người dùng chủ động dừng → báo AbortError cho nơi gọi.
+            if (outer && outer.aborted) {
+                throw new DOMException('Aborted', 'AbortError');
             }
 
             lastError =
-                error;
+                timedOut
+                    ? new Error(
+                        'Hết thời gian chờ phản hồi (' +
+                        Math.round(timeoutMs / 1000) +
+                        ' giây).'
+                    )
+                    : error;
 
-            await sleep(
-                700 *
-                Math.pow(
-                    2,
-                    attempt
-                ),
-                translationAbortController
-                    ?.signal
-            );
+        } finally {
 
-            continue;
+            clearTimeout(timer);
 
-        }
-
-        if (
-            response.ok
-        ) {
-            return response;
-        }
-
-        let message =
-            'HTTP ' +
-            response.status;
-
-        try {
-
-            const errorData =
-                await response.json();
-
-            message =
-                errorData?.error?.message ||
-                errorData?.error?.code ||
-                message;
-
-        } catch {}
-
-        const retryable =
-            response.status === 408 ||
-            response.status === 409 ||
-            response.status === 429 ||
-            response.status >= 500;
-
-        // Lỗi không đáng để thử lại (vd: 400/401/403/404 — sai API
-        // key, sai tên model, tham số không hợp lệ...) phải thoát
-        // NGAY, không được rơi vào nhánh catch bên dưới rồi lặp lại
-        // y hệt 3 lần (trước đây bị lỗi này, vừa tốn ~5 giây vừa
-        // khiến cơ chế thử-lại-bỏ-tham-số ở compatibleTranslateBatch
-        // không bao giờ có cơ hội chạy).
-        if (!retryable) {
-
-            throw new Error(
-                message
-            );
+            if (outer) {
+                outer.removeEventListener('abort', onOuterAbort);
+            }
 
         }
 
-        lastError =
-            new Error(
-                message
-            );
+        let waitMs = 700 * Math.pow(2, attempt);
 
-        await sleep(
-            700 *
-            Math.pow(
-                2,
-                attempt
-            ),
-            translationAbortController
-                ?.signal
-        );
+        if (response) {
+
+            if (response.ok) {
+                return response;
+            }
+
+            let message = 'HTTP ' + response.status;
+
+            try {
+
+                const errorData = await response.json();
+
+                message =
+                    (errorData && errorData.error &&
+                        (errorData.error.message || errorData.error.code)) ||
+                    (errorData && errorData.message) ||
+                    message;
+
+            } catch {}
+
+            if (typeof message !== 'string') {
+                message = JSON.stringify(message);
+            }
+
+            const retryable =
+                response.status === 408 ||
+                response.status === 409 ||
+                response.status === 429 ||
+                response.status >= 500;
+
+            if (!retryable) {
+                throw new Error(message);
+            }
+
+            lastError = new Error(message);
+
+            const retryAfter =
+                Number(response.headers.get('retry-after'));
+
+            if (retryAfter > 0) {
+                waitMs = Math.min(retryAfter * 1000, 20000);
+            }
+
+        }
+
+        if (attempt < attempts - 1) {
+            await sleep(waitMs, outer);
+        }
 
     }
 
     throw (
         lastError ||
-        new Error(
-            'API request thất bại.'
-        )
+        new Error('API request thất bại.')
     );
 
 }
@@ -4133,64 +4195,64 @@ function msToSrtTime(ms) {
    SRT
 ========================================================= */
 
-function subtitlesToSrt(list) {
+// Chuẩn hóa nội dung 1 phụ đề: thống nhất xuống dòng, bỏ dòng trống
+// (dòng trống làm vỡ block SRT) và khoảng trắng thừa cuối dòng.
+function normalizeSubText(text) {
 
-    return list
-        .map(
-            (
-                item,
-                index
-            ) => {
-
-                return (
-                    (index + 1) +
-                    '\r\n' +
-
-                    msToSrtTime(
-                        item.startMs
-                    ) +
-
-                    ' --> ' +
-
-                    msToSrtTime(
-                        item.endMs
-                    ) +
-
-                    '\r\n' +
-
-                    String(
-                        item.text ??
-                        ''
-                    ) +
-
-                    '\r\n\r\n'
-                );
-
-            }
-        )
-        .join('');
+    return String(text == null ? '' : text)
+        .replace(/\r\n?/g, '\n')
+        .split('\n')
+        .map(line => line.trimEnd())
+        .filter(line => line.trim() !== '')
+        .join('\n')
+        .trim();
 
 }
 
 
+function subtitlesToSrt(list) {
+
+    const out = new Array(list.length);
+
+    for (let i = 0; i < list.length; i++) {
+
+        const item = list[i];
+
+        out[i] =
+            (i + 1) +
+            '\r\n' +
+            msToSrtTime(item.startMs) +
+            ' --> ' +
+            msToSrtTime(item.endMs) +
+            '\r\n' +
+            normalizeSubText(item.text).replace(/\n/g, '\r\n') +
+            '\r\n\r\n';
+
+    }
+
+    return out.join('');
+
+}
+
+
+// Trả về NaN nếu timestamp sai định dạng để parseSrtText bỏ qua block lỗi
+// (người dùng sẽ thấy cảnh báo lệch số block thay vì bị đổi thành 00:00:00).
 function srtTimeToMs(text) {
 
     const match =
         String(text)
             .trim()
-            .match(
-                /^(\d{2}):(\d{2}):(\d{2}),(\d{3})$/
-            );
+            .match(/^(\d{1,3}):(\d{2}):(\d{2})[,.](\d{1,3})$/);
 
     if (!match) {
-        return 0;
+        return NaN;
     }
 
     return (
         Number(match[1]) * 3600000 +
         Number(match[2]) * 60000 +
         Number(match[3]) * 1000 +
-        Number(match[4])
+        Number(match[4].padEnd(3, '0'))
     );
 
 }
@@ -4199,98 +4261,53 @@ function srtTimeToMs(text) {
 function parseSrtText(text) {
 
     const clean =
-        String(text ?? '')
-            .replace(
-                /^\uFEFF/,
-                ''
-            )
-            .replace(
-                /\r/g,
-                ''
-            )
+        String(text == null ? '' : text)
+            .replace(/^\uFEFF/, '')
+            .replace(/\r\n?/g, '\n')
             .trim();
 
     if (!clean) {
         return [];
     }
 
-    const blocks =
-        clean.split(
-            /\n{2,}/
-        );
+    // Dòng trống có thể chứa khoảng trắng khi người dùng sửa tay.
+    const blocks = clean.split(/\n(?:[ \t]*\n)+/);
 
     const result = [];
 
-    for (
-        const block of blocks
-    ) {
+    for (const block of blocks) {
 
         const lines =
             block
                 .split('\n')
-                .map(
-                    x =>
-                        x.trimEnd()
-                );
-
-        if (
-            lines.length < 3
-        ) {
-            continue;
-        }
+                .map(line => line.trimEnd());
 
         const arrowIndex =
-            lines.findIndex(
-                line =>
-                    line.includes(
-                        ' --> '
-                    )
-            );
+            lines.findIndex(line => line.includes('-->'));
 
-        if (
-            arrowIndex === -1
-        ) {
+        if (arrowIndex === -1) {
             continue;
         }
 
-        const timeLine =
-            lines[arrowIndex];
+        const times = lines[arrowIndex].split('-->');
 
-        const times =
-            timeLine.split(
-                ' --> '
-            );
-
-        if (
-            times.length !== 2
-        ) {
+        if (times.length !== 2) {
             continue;
         }
 
-        const startMs =
-            srtTimeToMs(
-                times[0]
-            );
+        const startMs = srtTimeToMs(times[0]);
 
-        const endMs =
-            srtTimeToMs(
-                times[1]
-            );
+        // Bỏ phần tọa độ/định dạng phía sau timestamp kết thúc nếu có.
+        const endMs = srtTimeToMs(times[1].trim().split(/\s+/)[0]);
 
-        const textLines =
-            lines.slice(
-                arrowIndex + 1
-            );
+        if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) {
+            continue;
+        }
 
         result.push({
-
             startMs,
-
             endMs,
-
-            text:
-                textLines.join('\n').trim()
-
+            text: lines.slice(arrowIndex + 1).join('\n').trim()
         });
 
     }
@@ -4357,11 +4374,20 @@ function selectFile(file) {
         return;
     }
 
-    const name =
-        String(
-            file.name ||
-            ''
-        ).trim();
+    // Đổi file khi đang dịch sẽ làm mảng subtitles bị thay giữa chừng.
+    if (translationRunning) {
+
+        showStatus(
+            convertStatus,
+            '⚠️ Đang dịch — hãy bấm “Dừng dịch” trước khi chọn file mới.',
+            'warning'
+        );
+
+        return;
+
+    }
+
+    const name = String(file.name || '').trim();
 
     if (!name) {
 
@@ -4372,13 +4398,10 @@ function selectFile(file) {
         );
 
         return;
+
     }
 
-    if (
-        !name
-            .toLowerCase()
-            .endsWith('.json')
-    ) {
+    if (!name.toLowerCase().endsWith('.json')) {
 
         showStatus(
             convertStatus,
@@ -4387,25 +4410,18 @@ function selectFile(file) {
         );
 
         return;
+
     }
 
-    selectedFile =
-        file;
+    selectedFile = file;
 
-    fileName.textContent =
-        name;
+    fileName.textContent = name;
 
-    fileSize.textContent =
-        formatFileSize(
-            file.size
-        );
+    fileSize.textContent = formatFileSize(file.size);
 
-    fileInfo.classList.remove(
-        'hidden'
-    );
+    fileInfo.classList.remove('hidden');
 
-    convertBtn.disabled =
-        false;
+    convertBtn.disabled = false;
 
     subtitles = [];
 
@@ -4413,39 +4429,27 @@ function selectFile(file) {
 
     translatedSrt = '';
 
-    stats.classList.add(
-        'hidden'
-    );
+    translatedBaseline = [];
 
-    translationSection.classList.add(
-        'hidden'
-    );
+    stats.classList.add('hidden');
 
-    previewSection.classList.add(
-        'hidden'
-    );
+    translationSection.classList.add('hidden');
 
-    downloadOriginalBtn.disabled =
-        true;
+    previewSection.classList.add('hidden');
 
-    downloadTranslatedBtn.disabled =
-        true;
+    downloadOriginalBtn.disabled = true;
 
-    previewTranslatedBtn.disabled =
-        true;
+    downloadTranslatedBtn.disabled = true;
 
-    learnEditedBtn.disabled =
-        true;
+    previewTranslatedBtn.disabled = true;
 
-    saveEditedPreviewBtn.classList.add(
-        'hidden'
-    );
+    learnEditedBtn.disabled = true;
+
+    saveEditedPreviewBtn.classList.add('hidden');
 
     showStatus(
         convertStatus,
-        '✅ Đã nhận file JSON: ' +
-        name +
-        '.',
+        '✅ Đã nhận file JSON: ' + name + '.',
         'success'
     );
 
@@ -5213,8 +5217,20 @@ async function convertFile() {
 
     }
 
-    convertBtn.disabled =
-        true;
+    // Chuyển đổi lại khi đang dịch sẽ thay mảng subtitles giữa chừng.
+    if (translationRunning) {
+
+        showStatus(
+            convertStatus,
+            '⚠️ Đang dịch — hãy dừng dịch trước khi chuyển đổi lại.',
+            'warning'
+        );
+
+        return;
+
+    }
+
+    convertBtn.disabled = true;
 
     try {
 
@@ -5224,21 +5240,15 @@ async function convertFile() {
             'warning'
         );
 
-        let content =
-            await selectedFile.text();
+        let content = await selectedFile.text();
 
         content =
             content
-                .replace(
-                    /^\uFEFF/,
-                    ''
-                )
+                .replace(/^\uFEFF/, '')
                 .trim();
 
         if (!content) {
-            throw new Error(
-                'File JSON đang trống.'
-            );
+            throw new Error('File JSON đang trống.');
         }
 
         showStatus(
@@ -5247,38 +5257,19 @@ async function convertFile() {
             'warning'
         );
 
-        const data =
-            JSON.parse(
-                content
-            );
+        const data = JSON.parse(content);
 
         const result = [];
 
-        const seen =
-            new Set();
+        const seen = new Set();
 
-        extractSubs(
-            data,
-            result,
-            seen
-        );
+        extractSubs(data, result, seen);
 
-        result.sort(
-            (
-                a,
-                b
-            ) =>
-                a.startMs -
-                b.startMs
-        );
+        result.sort((a, b) => a.startMs - b.startMs);
 
-        subtitles =
-            result;
+        subtitles = result;
 
-        if (
-            subtitles.length ===
-            0
-        ) {
+        if (subtitles.length === 0) {
 
             throw new Error(
                 'Không tìm thấy subtitle_cache_info / sentence_list.'
@@ -5286,66 +5277,35 @@ async function convertFile() {
 
         }
 
-        originalSrt =
-            subtitlesToSrt(
-                subtitles
-            );
+        originalSrt = subtitlesToSrt(subtitles);
 
-        translatedSrt =
-            '';
+        translatedSrt = '';
 
-        subtitleCount.textContent =
-            subtitles.length;
+        translatedBaseline = [];
 
-        const last =
-            subtitles[
-                subtitles.length - 1
-            ];
+        subtitleCount.textContent = subtitles.length;
+
+        const last = subtitles[subtitles.length - 1];
 
         durationInfo.textContent =
-            msToSrtTime(
-                last.endMs
-            ).slice(
-                0,
-                5
-            );
+            msToSrtTime(last.endMs).slice(0, 5);
 
-        stats.classList.remove(
-            'hidden'
-        );
+        stats.classList.remove('hidden');
 
-        translationSection.classList.remove(
-            'hidden'
-        );
+        translationSection.classList.remove('hidden');
 
-        previewSection.classList.remove(
-            'hidden'
-        );
+        previewSection.classList.remove('hidden');
 
-        downloadOriginalBtn.disabled =
-            false;
+        downloadOriginalBtn.disabled = false;
 
-        downloadTranslatedBtn.disabled =
-            true;
+        downloadTranslatedBtn.disabled = true;
 
-        previewTranslatedBtn.disabled =
-            true;
+        previewTranslatedBtn.disabled = true;
 
-        learnEditedBtn.disabled =
-            true;
+        learnEditedBtn.disabled = true;
 
-        previewMode =
-            'original';
-
-        preview.value =
-            originalSrt;
-
-        preview.readOnly =
-            true;
-
-        saveEditedPreviewBtn.classList.add(
-            'hidden'
-        );
+        // Đồng bộ nội dung + trạng thái nút "SRT gốc / SRT đã dịch".
+        showOriginalPreview();
 
         updateTranslationUI();
 
@@ -5357,24 +5317,18 @@ async function convertFile() {
             'success'
         );
 
-    } catch (
-        error
-    ) {
+    } catch (error) {
 
         showStatus(
             convertStatus,
             '❌ Lỗi: ' +
-            (
-                error?.message ||
-                'Không xác định'
-            ),
+            (error?.message || 'Không xác định'),
             'error'
         );
 
     } finally {
 
-        convertBtn.disabled =
-            false;
+        convertBtn.disabled = false;
 
     }
 
@@ -5387,8 +5341,7 @@ async function convertFile() {
 
 function updateTranslationUI() {
 
-    const method =
-        translationMethod.value;
+    const method = translationMethod.value;
 
     const isAI =
         [
@@ -5397,68 +5350,37 @@ function updateTranslationUI() {
             'deepseek',
             'openai',
             'openrouter'
-        ].includes(
-            method
-        );
+        ].includes(method);
 
-    aiPromptOptions.classList.toggle(
-        'hidden',
-        !isAI
-    );
+    aiPromptOptions.classList.toggle('hidden', !isAI);
 
-    geminiOptions.classList.toggle(
-        'hidden',
-        method !== 'gemini'
-    );
+    geminiOptions.classList.toggle('hidden', method !== 'gemini');
 
-    groqOptions.classList.toggle(
-        'hidden',
-        method !== 'groq'
-    );
+    groqOptions.classList.toggle('hidden', method !== 'groq');
 
-    deepseekOptions.classList.toggle(
-        'hidden',
-        method !== 'deepseek'
-    );
+    deepseekOptions.classList.toggle('hidden', method !== 'deepseek');
 
-    openaiOptions.classList.toggle(
-        'hidden',
-        method !== 'openai'
-    );
+    openaiOptions.classList.toggle('hidden', method !== 'openai');
 
-    openrouterOptions.classList.toggle(
-        'hidden',
-        method !== 'openrouter'
-    );
+    openrouterOptions.classList.toggle('hidden', method !== 'openrouter');
 
-    builtinOptions.classList.toggle(
-        'hidden',
-        method !== 'builtin'
-    );
+    builtinOptions.classList.toggle('hidden', method !== 'builtin');
 
-    if (
-        method === 'builtin'
-    ) {
+    if (method === 'builtin') {
 
-        sourceLanguage.value =
-            'zh-CN';
+        sourceLanguage.value = 'zh-CN';
 
-        targetLanguage.value =
-            'vi';
+        targetLanguage.value = 'vi';
 
-        sourceLanguage.disabled =
-            true;
+        sourceLanguage.disabled = true;
 
-        targetLanguage.disabled =
-            true;
+        targetLanguage.disabled = true;
 
     } else {
 
-        sourceLanguage.disabled =
-            false;
+        sourceLanguage.disabled = false;
 
-        targetLanguage.disabled =
-            false;
+        targetLanguage.disabled = false;
 
     }
 
@@ -5467,18 +5389,15 @@ function updateTranslationUI() {
         subtitles.length === 0 ||
         translationRunning;
 
-    if (
-        method === 'none'
-    ) {
+    if (method === 'none') {
 
-        translatedSrt =
-            '';
+        translatedSrt = '';
 
-        downloadTranslatedBtn.disabled =
-            true;
+        translatedBaseline = [];
 
-        previewTranslatedBtn.disabled =
-            true;
+        downloadTranslatedBtn.disabled = true;
+
+        previewTranslatedBtn.disabled = true;
 
         showOriginalPreview();
 
@@ -5534,43 +5453,22 @@ resetPromptBtn.addEventListener(
    GOOGLE
 ========================================================= */
 
-async function googleTranslate(
-    text,
-    source,
-    target
-) {
+async function googleTranslate(text, source, target) {
 
     const url =
         'https://translate.googleapis.com/translate_a/single' +
         '?client=gtx' +
-        '&sl=' +
-        encodeURIComponent(
-            source
-        ) +
-        '&tl=' +
-        encodeURIComponent(
-            target
-        ) +
+        '&sl=' + encodeURIComponent(source) +
+        '&tl=' + encodeURIComponent(target) +
         '&dt=t' +
-        '&q=' +
-        encodeURIComponent(
-            text
-        );
+        '&q=' + encodeURIComponent(text);
 
-    const response =
-        await fetchWithRetry(
-            url,
-            {},
-            3
-        );
+    // Mỗi dòng chỉ cần vài giây — timeout ngắn để không treo cả file.
+    const response = await fetchWithRetry(url, {}, 3, 20000);
 
-    const data =
-        await response.json();
+    const data = await response.json();
 
-    if (
-        !Array.isArray(data) ||
-        !Array.isArray(data[0])
-    ) {
+    if (!Array.isArray(data) || !Array.isArray(data[0])) {
 
         throw new Error(
             'Google Dịch trả về dữ liệu không hợp lệ.'
@@ -5579,11 +5477,7 @@ async function googleTranslate(
     }
 
     return data[0]
-        .map(
-            item =>
-                item[0] ||
-                ''
-        )
+        .map(item => item[0] || '')
         .join('');
 
 }
@@ -5593,76 +5487,36 @@ async function googleTranslate(
    AI RESPONSE PARSER
 ========================================================= */
 
-function cleanAIResponse(
-    text
-) {
+function cleanAIResponse(text) {
 
+    // Một số model reasoning (Qwen, DeepSeek...) trả kèm khối <think>
+    // chứa dấu { } làm hỏng việc tách JSON.
     let clean =
-        String(
-            text ??
-            ''
-        ).trim();
+        String(text == null ? '' : text)
+            .replace(/<think>[\s\S]*?<\/think>/gi, '')
+            .trim();
 
     clean =
         clean
-            .replace(
-                /^```json\s*/i,
-                ''
-            )
-            .replace(
-                /^```\s*/i,
-                ''
-            )
-            .replace(
-                /\s*```$/i,
-                ''
-            )
+            .replace(/^```json\s*/i, '')
+            .replace(/^```\s*/i, '')
+            .replace(/\s*```$/i, '')
             .trim();
 
-    const firstObject =
-        clean.indexOf(
-            '{'
-        );
+    const firstObject = clean.indexOf('{');
 
-    const lastObject =
-        clean.lastIndexOf(
-            '}'
-        );
+    const lastObject = clean.lastIndexOf('}');
 
-    const firstArray =
-        clean.indexOf(
-            '['
-        );
+    const firstArray = clean.indexOf('[');
 
-    const lastArray =
-        clean.lastIndexOf(
-            ']'
-        );
+    const lastArray = clean.lastIndexOf(']');
 
-    if (
-        firstObject !== -1 &&
-        lastObject >
-        firstObject
-    ) {
-
-        return clean.slice(
-            firstObject,
-            lastObject + 1
-        );
-
+    if (firstObject !== -1 && lastObject > firstObject) {
+        return clean.slice(firstObject, lastObject + 1);
     }
 
-    if (
-        firstArray !== -1 &&
-        lastArray >
-        firstArray
-    ) {
-
-        return clean.slice(
-            firstArray,
-            lastArray + 1
-        );
-
+    if (firstArray !== -1 && lastArray > firstArray) {
+        return clean.slice(firstArray, lastArray + 1);
     }
 
     return clean;
@@ -5670,121 +5524,110 @@ function cleanAIResponse(
 }
 
 
-function parseAIResult(
-    text
-) {
+function parseAIResult(text) {
 
-    const clean =
-        cleanAIResponse(
-            text
-        );
+    const clean = cleanAIResponse(text);
 
     let parsed;
 
     try {
 
-        parsed =
-            JSON.parse(
-                clean
-            );
+        parsed = JSON.parse(clean);
 
     } catch {
 
-        throw new Error(
-            'AI trả về JSON không hợp lệ.'
-        );
+        // JSON bị cắt giữa chừng (hết token) hoặc lỗi cú pháp nhỏ:
+        // nhặt các object {"id":..,"text":".."} còn nguyên thay vì bỏ cả lượt.
+        const salvaged = [];
+
+        const pattern =
+            /\{\s*"id"\s*:\s*(-?\d+)\s*,\s*"text"\s*:\s*("(?:[^"\\]|\\[\s\S])*")\s*\}/g;
+
+        let match;
+
+        while ((match = pattern.exec(clean)) !== null) {
+
+            try {
+
+                salvaged.push({
+                    id: Number(match[1]),
+                    text: JSON.parse(match[2])
+                });
+
+            } catch {}
+
+        }
+
+        if (salvaged.length) {
+            return salvaged;
+        }
+
+        throw new Error('AI trả về JSON không hợp lệ.');
 
     }
 
-    if (
-        Array.isArray(
-            parsed
-        )
-    ) {
-
+    if (Array.isArray(parsed)) {
         return parsed;
-
     }
 
-    if (
-        Array.isArray(
-            parsed?.translations
-        )
-    ) {
-
+    if (parsed && Array.isArray(parsed.translations)) {
         return parsed.translations;
-
     }
 
-    throw new Error(
-        'AI không trả về translations array.'
-    );
+    throw new Error('AI không trả về translations array.');
 
 }
 
 
-function applyAITranslations(
-    translatedTexts,
-    result,
-    validIds
-) {
+function applyAITranslations(translatedTexts, result, validIds) {
 
-    if (
-        !Array.isArray(result)
-    ) {
+    if (!Array.isArray(result)) {
         return 0;
     }
 
-    const validSet =
-        new Set(
-            validIds
-        );
+    const validSet = new Set(validIds);
 
-    const used =
-        new Set();
+    const used = new Set();
 
     let count = 0;
 
-    for (
-        const item of result
-    ) {
+    const take = (id, raw) => {
 
-        if (
-            !item ||
-            typeof item !==
-            'object'
-        ) {
-            continue;
+        const text = String(raw == null ? '' : raw).trim();
+
+        if (!validSet.has(id) || used.has(id) || !text) {
+            return;
         }
 
-        const id =
-            Number(
-                item.id
-            );
-
-        if (
-            !validSet.has(id) ||
-            used.has(id)
-        ) {
-            continue;
-        }
-
-        const text =
-            String(
-                item.text ??
-                ''
-            ).trim();
-
-        if (!text) {
-            continue;
-        }
-
-        translatedTexts[id] =
-            text;
+        translatedTexts[id] = text;
 
         used.add(id);
 
         count++;
+
+    };
+
+    for (const item of result) {
+
+        if (item && typeof item === 'object') {
+            take(Number(item.id), item.text);
+        }
+
+    }
+
+    // Model bỏ/đổi id nhưng trả đúng số phần tử theo thứ tự → ghép theo vị trí.
+    if (count === 0 && result.length === validIds.length) {
+
+        result.forEach((item, index) => {
+
+            take(
+                validIds[index],
+                typeof item === 'string'
+                    ? item
+                    : (item && item.text)
+            );
+
+        });
 
     }
 
@@ -5892,112 +5735,97 @@ function getGeminiConfig(
 }
 
 
-async function geminiTranslateBatch(
-    items,
-    apiKey,
-    model
-) {
+async function geminiTranslateBatch(items, apiKey, model) {
 
-    const prompt =
-        buildAIPrompt(
-            items
-        );
+    model = String(model || '').trim();
+
+    if (!model) {
+        throw new Error('Ông chưa nhập model Gemini.');
+    }
+
+    const prompt = buildAIPrompt(items);
 
     const url =
         'https://generativelanguage.googleapis.com/v1beta/models/' +
         encodeURIComponent(model) +
         ':generateContent';
 
-    const config =
-        getGeminiConfig(
-            model
+    const config = getGeminiConfig(model);
+
+    const send = generationExtra =>
+        fetchWithRetry(
+            url,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-goog-api-key': apiKey
+                },
+                body: JSON.stringify({
+                    contents: [
+                        {
+                            parts: [
+                                { text: prompt }
+                            ]
+                        }
+                    ],
+                    generationConfig: {
+                        responseMimeType: 'application/json',
+                        ...generationExtra
+                    }
+                })
+            },
+            3,
+            240000
         );
 
-    const body = {
+    let response;
 
-        contents: [
+    try {
 
-            {
+        response = await send(config);
 
-                parts: [
+    } catch (error) {
 
-                    {
-                        text:
-                            prompt
-                    }
+        // Model không hỗ trợ thinkingConfig/temperature (tuỳ model, tuỳ thời
+        // điểm) → thử lại đúng 1 lần với cấu hình tối giản thay vì hỏng lượt.
+        if (
+            error &&
+            error.name !== 'AbortError' &&
+            Object.keys(config).length > 0 &&
+            /thinking|temperature|unsupported/i.test(String(error.message))
+        ) {
 
-                ]
+            response = await send({});
 
-            }
+        } else {
 
-        ],
-
-        generationConfig: {
-
-            responseMimeType:
-                'application/json',
-
-            ...config
+            throw error;
 
         }
 
-    };
+    }
 
-    const response =
-        await fetchWithRetry(
-            url,
-            {
+    const data = await response.json();
 
-                method:
-                    'POST',
-
-                headers: {
-
-                    'Content-Type':
-                        'application/json',
-
-                    'x-goog-api-key':
-                        apiKey
-
-                },
-
-                body:
-                    JSON.stringify(
-                        body
-                    )
-
-            },
-            3
-        );
-
-    const data =
-        await response.json();
+    const candidate = data && data.candidates && data.candidates[0];
 
     const text =
-        data
-            ?.candidates?.[0]
-            ?.content?.parts
-            ?.map(
-                part =>
-                    part.text ||
-                    ''
-            )
-            .join('');
+        candidate && candidate.content && candidate.content.parts
+            ? candidate.content.parts.map(part => part.text || '').join('')
+            : '';
 
     if (!text) {
 
         throw new Error(
-            data
-                ?.promptFeedback
-                ?.blockReason ||
+            (data && data.promptFeedback && data.promptFeedback.blockReason) ||
+            (candidate && candidate.finishReason) ||
             'Gemini không trả về nội dung.'
         );
 
     }
 
-    return parseAIResult(
-        text
-    );
+    return parseAIResult(text);
 
 }
 
@@ -6006,23 +5834,22 @@ async function geminiTranslateBatch(
    GENERIC OPENAI-COMPATIBLE
 ========================================================= */
 
-async function compatibleTranslateBatch(
-    items,
-    config
-) {
+async function compatibleTranslateBatch(items, config) {
 
-    const prompt =
-        buildAIPrompt(
-            items
-        );
+    config.model = String(config.model || '').trim();
+
+    if (!config.model) {
+        throw new Error('Ông chưa nhập tên model.');
+    }
+
+    const prompt = buildAIPrompt(items);
 
     const tokenLimit =
         Math.min(
             60000,
             Math.max(
                 1600,
-                items.length *
-                140
+                items.length * 140
             )
         );
 
@@ -6033,29 +5860,19 @@ async function compatibleTranslateBatch(
 
         const body = {
 
-            model:
-                config.model,
+            model: config.model,
 
             messages: [
 
                 {
-
-                    role:
-                        'system',
-
+                    role: 'system',
                     content:
                         'Bạn là chuyên gia dịch phụ đề phim. Hãy tuân thủ tuyệt đối định dạng JSON và các quy tắc dịch được cung cấp.'
-
                 },
 
                 {
-
-                    role:
-                        'user',
-
-                    content:
-                        prompt
-
+                    role: 'user',
+                    content: prompt
                 }
 
             ]
@@ -6065,44 +5882,30 @@ async function compatibleTranslateBatch(
         // Các model reasoning thật của OpenAI (Chat Completions) chỉ
         // chấp nhận max_completion_tokens, không phải max_tokens.
         if (config.useMaxCompletionTokens) {
-
-            body.max_completion_tokens =
-                tokenLimit;
-
+            body.max_completion_tokens = tokenLimit;
         } else {
-
-            body.max_tokens =
-                tokenLimit;
-
+            body.max_tokens = tokenLimit;
         }
 
         if (
             config.temperature !== undefined &&
             !opts.dropTemperature
         ) {
-
-            body.temperature =
-                config.temperature;
-
+            body.temperature = config.temperature;
         }
 
         if (
             config.reasoning_effort &&
             !opts.dropReasoning
         ) {
-
-            body.reasoning_effort =
-                config.reasoning_effort;
-
+            body.reasoning_effort = config.reasoning_effort;
         }
 
         if (config.responseFormat) {
 
-            body.response_format =
-                {
-                    type:
-                        'json_object'
-                };
+            body.response_format = {
+                type: 'json_object'
+            };
 
         }
 
@@ -6112,8 +5915,7 @@ async function compatibleTranslateBatch(
 
     function looksLikeUnsupportedParamError(message) {
 
-        message =
-            String(message || '').toLowerCase();
+        message = String(message || '').toLowerCase();
 
         return (
             message.includes('reasoning_effort') ||
@@ -6141,30 +5943,15 @@ async function compatibleTranslateBatch(
         return fetchWithRetry(
             config.endpoint,
             {
+                method: 'POST',
 
-                method:
-                    'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + config.apiKey,
+                    ...(config.extraHeaders || {})
+                },
 
-                headers:
-                    {
-
-                        'Content-Type':
-                            'application/json',
-
-                        'Authorization':
-                            'Bearer ' +
-                            config.apiKey,
-
-                        ...(config.extraHeaders ||
-                            {})
-
-                    },
-
-                body:
-                    JSON.stringify(
-                        buildBody(opts)
-                    )
-
+                body: JSON.stringify(buildBody(opts))
             },
             3
         );
@@ -6175,8 +5962,7 @@ async function compatibleTranslateBatch(
 
     try {
 
-        response =
-            await callApi({});
+        response = await callApi({});
 
     } catch (error) {
 
@@ -6194,11 +5980,10 @@ async function compatibleTranslateBatch(
             looksLikeUnsupportedParamError(error?.message)
         ) {
 
-            response =
-                await callApi({
-                    dropReasoning: true,
-                    dropTemperature: true
-                });
+            response = await callApi({
+                dropReasoning: true,
+                dropTemperature: true
+            });
 
         } else {
 
@@ -6208,51 +5993,39 @@ async function compatibleTranslateBatch(
 
     }
 
+    const data = await response.json();
 
-    const data =
-        await response.json();
+    const choice = data?.choices?.[0];
 
-    let content =
-        data
-            ?.choices?.[0]
-            ?.message
-            ?.content;
+    let content = choice?.message?.content;
 
-
-    if (
-        Array.isArray(
-            content
-        )
-    ) {
+    if (Array.isArray(content)) {
 
         content =
             content
-                .map(
-                    item =>
-                        typeof item ===
-                        'string'
-                            ? item
-                            : item?.text ||
-                              ''
+                .map(item =>
+                    typeof item === 'string'
+                        ? item
+                        : item?.text || ''
                 )
                 .join('');
 
     }
 
-
     if (!content) {
 
         throw new Error(
             data?.error?.message ||
-            'Model không trả về nội dung.'
+            (
+                choice?.finish_reason === 'length'
+                    ? 'Model hết token trước khi trả kết quả — hãy giảm "Số dòng / lượt" hoặc hạ Reasoning.'
+                    : 'Model không trả về nội dung.'
+            )
         );
 
     }
 
-
-    return parseAIResult(
-        content
-    );
+    return parseAIResult(content);
 
 }
 
@@ -6261,255 +6034,219 @@ async function compatibleTranslateBatch(
    PROVIDER DISPATCH
 ========================================================= */
 
-async function translateAIBatch(
-    items,
-    method
-) {
+// Xóa mọi khoảng trắng / ký tự vô hình khi dán API key từ điện thoại.
+function cleanKey(value) {
 
-    const accuracy =
-        getAccuracyConfig();
+    return String(value == null ? '' : value)
+        .replace(/[\s\u200B-\u200D\uFEFF]+/g, '');
 
-    if (
-        method === 'gemini'
-    ) {
+}
 
-        const key =
-            geminiKey.value.trim();
+
+async function translateAIBatchOnce(items, method) {
+
+    const accuracy = getAccuracyConfig();
+
+    if (method === 'gemini') {
+
+        const key = cleanKey(geminiKey.value);
 
         if (!key) {
-
-            throw new Error(
-                'Ông chưa nhập Gemini API Key.'
-            );
-
+            throw new Error('Ông chưa nhập Gemini API Key.');
         }
 
         return geminiTranslateBatch(
             items,
             key,
-            geminiModel.value
+            String(geminiModel.value).trim()
         );
 
     }
 
 
-    if (
-        method === 'groq'
-    ) {
+    if (method === 'groq') {
 
-        const key =
-            groqKey.value.trim();
+        const key = cleanKey(groqKey.value);
 
         if (!key) {
-
-            throw new Error(
-                'Ông chưa nhập Groq API Key.'
-            );
-
+            throw new Error('Ông chưa nhập Groq API Key.');
         }
 
         return compatibleTranslateBatch(
             items,
             {
+                endpoint: 'https://api.groq.com/openai/v1/chat/completions',
 
-                endpoint:
-                    'https://api.groq.com/openai/v1/chat/completions',
+                apiKey: key,
 
-                apiKey:
-                    key,
+                model: String(groqModel.value).trim(),
 
-                model:
-                    groqModel.value,
-
-                temperature:
-                    accuracy.temperature,
+                temperature: accuracy.temperature,
 
                 reasoning_effort:
                     accuracy.reasoning === 'max'
                         ? 'high'
                         : accuracy.reasoning,
 
-                responseFormat:
-                    true
-
+                responseFormat: true
             }
         );
 
     }
 
 
-    if (
-        method === 'deepseek'
-    ) {
+    if (method === 'deepseek') {
 
-        const key =
-            deepseekKey.value.trim();
+        const key = cleanKey(deepseekKey.value);
 
         if (!key) {
-
-            throw new Error(
-                'Ông chưa nhập DeepSeek API Key.'
-            );
-
+            throw new Error('Ông chưa nhập DeepSeek API Key.');
         }
 
-        let reasoning =
-            deepseekReasoning.value;
+        let reasoning = deepseekReasoning.value;
 
-        if (
-            reasoning === 'auto'
-        ) {
-
-            reasoning =
-                accuracy.reasoning;
-
+        if (reasoning === 'auto') {
+            reasoning = accuracy.reasoning;
         }
 
         return compatibleTranslateBatch(
             items,
             {
+                endpoint: 'https://api.deepseek.com/chat/completions',
 
-                endpoint:
-                    'https://api.deepseek.com/chat/completions',
+                apiKey: key,
 
-                apiKey:
-                    key,
+                model: String(deepseekModel.value).trim(),
 
-                model:
-                    deepseekModel.value,
+                reasoning_effort: reasoning,
 
-                reasoning_effort:
-                    reasoning,
+                temperature: accuracy.temperature,
 
-                temperature:
-                    accuracy.temperature,
-
-                responseFormat:
-                    true
-
+                responseFormat: true
             }
         );
 
     }
 
 
-    if (
-        method === 'openai'
-    ) {
+    if (method === 'openai') {
 
-        const key =
-            openaiKey.value.trim();
+        const key = cleanKey(openaiKey.value);
 
         if (!key) {
-
-            throw new Error(
-                'Ông chưa nhập OpenAI API Key.'
-            );
-
+            throw new Error('Ông chưa nhập OpenAI API Key.');
         }
 
-        let reasoning =
-            openaiReasoning.value;
+        let reasoning = openaiReasoning.value;
 
-        if (
-            reasoning === 'auto'
-        ) {
-
-            reasoning =
-                accuracy.reasoning;
-
+        if (reasoning === 'auto') {
+            reasoning = accuracy.reasoning;
         }
 
         return compatibleTranslateBatch(
             items,
             {
+                endpoint: 'https://api.openai.com/v1/chat/completions',
 
-                endpoint:
-                    'https://api.openai.com/v1/chat/completions',
+                apiKey: key,
 
-                apiKey:
-                    key,
+                model: String(openaiModel.value).trim(),
 
-                model:
-                    openaiModel.value,
+                reasoning_effort: reasoning,
 
-                reasoning_effort:
-                    reasoning,
+                useMaxCompletionTokens: true,
 
-                useMaxCompletionTokens:
-                    true,
-
-                responseFormat:
-                    true
-
+                responseFormat: true
             }
         );
 
     }
 
 
-    if (
-        method === 'openrouter'
-    ) {
+    if (method === 'openrouter') {
 
-        const key =
-            openrouterKey.value.trim();
+        const key = cleanKey(openrouterKey.value);
 
         if (!key) {
-
-            throw new Error(
-                'Ông chưa nhập OpenRouter API Key.'
-            );
-
+            throw new Error('Ông chưa nhập OpenRouter API Key.');
         }
 
-        const model =
-            openrouterModel.value.trim();
+        const model = openrouterModel.value.trim();
 
         if (!model) {
-
-            throw new Error(
-                'Ông chưa nhập model OpenRouter.'
-            );
-
+            throw new Error('Ông chưa nhập model OpenRouter.');
         }
 
         return compatibleTranslateBatch(
             items,
             {
+                endpoint: 'https://openrouter.ai/api/v1/chat/completions',
 
-                endpoint:
-                    'https://openrouter.ai/api/v1/chat/completions',
+                apiKey: key,
 
-                apiKey:
-                    key,
+                model: model,
 
-                model:
-                    model,
+                temperature: accuracy.temperature,
 
-                temperature:
-                    accuracy.temperature,
+                responseFormat: false,
 
-                responseFormat:
-                    false,
-
-                extraHeaders:
-                    {
-
-                        'X-Title':
-                            'LaySRT'
-
-                    }
-
+                extraHeaders: {
+                    'X-Title': 'LaySRT'
+                }
             }
         );
 
     }
 
 
-    throw new Error(
-        'Provider AI không được hỗ trợ.'
+    throw new Error('Provider AI không được hỗ trợ.');
+
+}
+
+
+// Gọi AI cho 1 lượt; nếu model chỉ trả về một phần số dòng thì tự yêu cầu
+// lại đúng 1 lần cho các dòng còn thiếu. Luôn trả về mảng {id, text} theo
+// id hợp lệ, nên vòng lặp dịch bên dưới không cần biết chuyện này.
+async function translateAIBatch(items, method) {
+
+    const ids = items.map(item => item.id);
+
+    const got = {};
+
+    applyAITranslations(
+        got,
+        await translateAIBatchOnce(items, method),
+        ids
     );
+
+    const missing = items.filter(item => !got[item.id]);
+
+    if (missing.length > 0 && missing.length < items.length) {
+
+        try {
+
+            applyAITranslations(
+                got,
+                await translateAIBatchOnce(missing, method),
+                missing.map(item => item.id)
+            );
+
+        } catch (error) {
+
+            if (error && error.name === 'AbortError') {
+                throw error;
+            }
+
+        }
+
+    }
+
+    return ids
+        .filter(id => got[id])
+        .map(id => ({
+            id: id,
+            text: got[id]
+        }));
 
 }
 
@@ -6609,62 +6346,50 @@ function translateBuiltinText(
 
 async function translateSubtitles() {
 
-    if (
-        translationRunning
-    ) {
+    if (translationRunning) {
         return;
     }
 
-    if (
-        subtitles.length ===
-        0
-    ) {
+    if (subtitles.length === 0) {
         return;
     }
 
-    const method =
-        translationMethod.value;
+    const method = translationMethod.value;
 
-    if (
-        method === 'none'
-    ) {
+    if (method === 'none') {
         return;
     }
 
-    translationRunning =
-        true;
+    // Chụp mảng phụ đề tại thời điểm bắt đầu dịch.
+    const subs = subtitles;
 
-    translationAbortController =
-        new AbortController();
+    translationRunning = true;
 
-    translateBtn.disabled =
-        true;
+    // Khóa các điều khiển có thể làm hỏng lượt dịch đang chạy
+    // (đổi phương thức làm xóa bản dịch, chuyển đổi lại thay mảng phụ đề).
+    translationMethod.disabled = true;
 
-    downloadTranslatedBtn.disabled =
-        true;
+    convertBtn.disabled = true;
 
-    previewTranslatedBtn.disabled =
-        true;
+    translationAbortController = new AbortController();
 
-    learnEditedBtn.disabled =
-        true;
+    translateBtn.disabled = true;
 
-    stopTranslateBtn.disabled =
-        false;
+    downloadTranslatedBtn.disabled = true;
 
-    stopTranslateBtn.classList.remove(
-        'hidden'
-    );
+    previewTranslatedBtn.disabled = true;
 
-    progressWrapper.classList.remove(
-        'hidden'
-    );
+    learnEditedBtn.disabled = true;
 
-    progressFill.style.width =
-        '0%';
+    stopTranslateBtn.disabled = false;
 
-    progressText.textContent =
-        'Đang chuẩn bị...';
+    stopTranslateBtn.classList.remove('hidden');
+
+    progressWrapper.classList.remove('hidden');
+
+    progressFill.style.width = '0%';
+
+    progressText.textContent = 'Đang chuẩn bị...';
 
     // wasAborted: người dùng bấm "Dừng dịch".
     // fatalError: nhiều lượt/dòng liên tiếp lỗi — dừng sớm thay vì
@@ -6672,44 +6397,33 @@ async function translateSubtitles() {
     // Dù dừng vì lý do gì, những dòng đã dịch được trước đó vẫn
     // được giữ lại thay vì mất trắng như trước.
     let wasAborted = false;
+
     let fatalError = null;
 
     try {
 
-        const translatedTexts =
-            new Array(
-                subtitles.length
-            );
+        const translatedTexts = new Array(subs.length);
 
-        const source =
-            sourceLanguage.value;
+        const source = sourceLanguage.value;
 
-        const target =
-            targetLanguage.value;
+        const target = targetLanguage.value;
 
         /* =================================================
            GOOGLE
         ================================================== */
 
-        if (
-            method === 'google'
-        ) {
+        if (method === 'google') {
 
-            let consecutiveFailures =
-                0;
+            let consecutiveFailures = 0;
 
-            for (
-                let i = 0;
-                i < subtitles.length;
-                i++
-            ) {
+            for (let i = 0; i < subs.length; i++) {
 
                 showStatus(
                     translationStatus,
                     '🌐 Google Dịch dòng ' +
                     (i + 1) +
                     '/' +
-                    subtitles.length +
+                    subs.length +
                     '...',
                     'warning'
                 );
@@ -6718,38 +6432,29 @@ async function translateSubtitles() {
 
                     translatedTexts[i] =
                         await googleTranslate(
-                            subtitles[i].text,
+                            subs[i].text,
                             source,
                             target
                         );
 
-                    consecutiveFailures =
-                        0;
+                    consecutiveFailures = 0;
 
-                    if (
-                        i <
-                        subtitles.length - 1
-                    ) {
+                    if (i < subs.length - 1) {
 
                         // Nghỉ một chút giữa các dòng để giảm nguy cơ
                         // bị Google giới hạn tốc độ khi file rất dài.
                         await sleep(
                             60,
-                            translationAbortController
-                                ?.signal
+                            translationAbortController?.signal
                         );
 
                     }
 
                 } catch (error) {
 
-                    if (
-                        error?.name ===
-                        'AbortError'
-                    ) {
+                    if (error?.name === 'AbortError') {
 
-                        wasAborted =
-                            true;
+                        wasAborted = true;
 
                         break;
 
@@ -6757,13 +6462,9 @@ async function translateSubtitles() {
 
                     consecutiveFailures++;
 
-                    if (
-                        consecutiveFailures >=
-                        5
-                    ) {
+                    if (consecutiveFailures >= 5) {
 
-                        fatalError =
-                            error;
+                        fatalError = error;
 
                         break;
 
@@ -6773,19 +6474,12 @@ async function translateSubtitles() {
 
                 const percent =
                     Math.round(
-                        (
-                            (i + 1) /
-                            subtitles.length
-                        ) * 100
+                        ((i + 1) / subs.length) * 100
                     );
 
-                progressFill.style.width =
-                    percent +
-                    '%';
+                progressFill.style.width = percent + '%';
 
-                progressText.textContent =
-                    percent +
-                    '%';
+                progressText.textContent = percent + '%';
 
             }
 
@@ -6803,42 +6497,21 @@ async function translateSubtitles() {
                 'deepseek',
                 'openai',
                 'openrouter'
-            ].includes(
-                method
-            )
+            ].includes(method)
         ) {
 
-            const size =
-                Number(
-                    batchSize.value
-                );
+            const size = Number(batchSize.value);
 
-            const total =
-                Math.ceil(
-                    subtitles.length /
-                    size
-                );
+            const total = Math.ceil(subs.length / size);
 
-            let consecutiveFailures =
-                0;
+            let consecutiveFailures = 0;
 
             const providerName = {
-
-                gemini:
-                    'Gemini',
-
-                groq:
-                    'Groq',
-
-                deepseek:
-                    'DeepSeek',
-
-                openai:
-                    'OpenAI',
-
-                openrouter:
-                    'OpenRouter'
-
+                gemini: 'Gemini',
+                groq: 'Groq',
+                deepseek: 'DeepSeek',
+                openai: 'OpenAI',
+                openrouter: 'OpenRouter'
             }[method];
 
             for (
@@ -6847,36 +6520,20 @@ async function translateSubtitles() {
                 batchIndex++
             ) {
 
-                const start =
-                    batchIndex *
-                    size;
+                const start = batchIndex * size;
 
-                const batch =
-                    subtitles.slice(
-                        start,
-                        start + size
-                    );
+                const batch = subs.slice(start, start + size);
 
                 const input =
                     batch.map(
-                        (
-                            item,
-                            index
-                        ) => ({
-
-                            id:
-                                start +
-                                index,
-
-                            text:
-                                item.text
-
+                        (item, index) => ({
+                            id: start + index,
+                            text: item.text
                         })
                     );
 
                 showStatus(
                     translationStatus,
-
                     '🤖 ' +
                     providerName +
                     ' đang dịch lượt ' +
@@ -6886,7 +6543,6 @@ async function translateSubtitles() {
                     ' (' +
                     batch.length +
                     ' dòng)...',
-
                     'warning'
                 );
 
@@ -6902,46 +6558,30 @@ async function translateSubtitles() {
                         applyAITranslations(
                             translatedTexts,
                             result,
-                            input.map(
-                                item =>
-                                    item.id
-                            )
+                            input.map(item => item.id)
                         );
 
-                    if (
-                        count <
-                        input.length
-                    ) {
+                    if (count < input.length) {
 
                         showStatus(
                             translationStatus,
-
                             '⚠️ ' +
                             providerName +
                             ' trả thiếu ' +
-                            (
-                                input.length -
-                                count
-                            ) +
+                            (input.length - count) +
                             ' dòng ở lượt này. Các dòng thiếu sẽ giữ nguyên.',
-
                             'warning'
                         );
 
                     }
 
-                    consecutiveFailures =
-                        0;
+                    consecutiveFailures = 0;
 
                 } catch (error) {
 
-                    if (
-                        error?.name ===
-                        'AbortError'
-                    ) {
+                    if (error?.name === 'AbortError') {
 
-                        wasAborted =
-                            true;
+                        wasAborted = true;
 
                         break;
 
@@ -6951,33 +6591,24 @@ async function translateSubtitles() {
 
                     showStatus(
                         translationStatus,
-
                         '⚠️ Lượt ' +
                         (batchIndex + 1) +
                         '/' +
                         total +
                         ' lỗi (' +
-                        (
-                            error?.message ||
-                            'không xác định'
-                        ) +
+                        (error?.message || 'không xác định') +
                         ') — giữ nguyên bản gốc cho ' +
                         batch.length +
                         ' dòng này.',
-
                         'warning'
                     );
 
                     // 2 lượt liên tiếp cùng lỗi thường là do sai API
                     // key / tên model chứ không phải trục trặc tạm
                     // thời — dừng sớm thay vì lặp lại lỗi cho hết file.
-                    if (
-                        consecutiveFailures >=
-                        2
-                    ) {
+                    if (consecutiveFailures >= 2) {
 
-                        fatalError =
-                            error;
+                        fatalError = error;
 
                         break;
 
@@ -6989,22 +6620,15 @@ async function translateSubtitles() {
                     Math.round(
                         (
                             Math.min(
-                                start +
-                                batch.length,
-                                subtitles.length
-                            ) /
-                            subtitles.length
-                        ) *
-                        100
+                                start + batch.length,
+                                subs.length
+                            ) / subs.length
+                        ) * 100
                     );
 
-                progressFill.style.width =
-                    percent +
-                    '%';
+                progressFill.style.width = percent + '%';
 
-                progressText.textContent =
-                    percent +
-                    '%';
+                progressText.textContent = percent + '%';
 
             }
 
@@ -7015,92 +6639,60 @@ async function translateSubtitles() {
            BUILTIN
         ================================================== */
 
-        else if (
-            method === 'builtin'
-        ) {
+        else if (method === 'builtin') {
 
-            let totalReplacements =
-                0;
+            let totalReplacements = 0;
 
-            let changedLines =
-                0;
+            let changedLines = 0;
 
-            for (
-                let i = 0;
-                i < subtitles.length;
-                i++
-            ) {
+            for (let i = 0; i < subs.length; i++) {
 
                 const result =
                     translateBuiltinText(
-                        subtitles[i].text,
+                        subs[i].text,
                         activeDictionary
                     );
 
-                translatedTexts[i] =
-                    result.text;
+                translatedTexts[i] = result.text;
 
-                totalReplacements +=
-                    result.replacements;
+                totalReplacements += result.replacements;
 
-                if (
-                    result.text !==
-                    subtitles[i].text
-                ) {
-
+                if (result.text !== subs[i].text) {
                     changedLines++;
-
                 }
 
                 const percent =
                     Math.round(
-                        (
-                            (i + 1) /
-                            subtitles.length
-                        ) *
-                        100
+                        ((i + 1) / subs.length) * 100
                     );
 
-                progressFill.style.width =
-                    percent +
-                    '%';
+                progressFill.style.width = percent + '%';
 
-                progressText.textContent =
-                    percent +
-                    '%';
+                progressText.textContent = percent + '%';
 
                 showStatus(
                     translationStatus,
-
                     '📚 Đang tra từ điển dòng ' +
                     (i + 1) +
                     '/' +
-                    subtitles.length +
+                    subs.length +
                     '...',
-
                     'warning'
                 );
 
-                if (
-                    i % 25 ===
-                    0
-                ) {
-
+                if (i % 25 === 0) {
                     await sleep(0);
-
                 }
 
             }
 
             showStatus(
                 translationStatus,
-
                 '✅ Dịch từ điển xong. Đã thay ' +
                 totalReplacements +
                 ' từ/cụm trong ' +
                 changedLines +
                 ' dòng.',
-
                 'success'
             );
 
@@ -7111,21 +6703,12 @@ async function translateSubtitles() {
            ĐẾM SỐ DÒNG CHƯA DỊCH ĐƯỢC (trước khi fallback)
         ================================================== */
 
-        let missingCount =
-            0;
+        let missingCount = 0;
 
-        for (
-            let i = 0;
-            i < subtitles.length;
-            i++
-        ) {
+        for (let i = 0; i < subs.length; i++) {
 
-            if (
-                !translatedTexts[i]
-            ) {
-
+            if (!translatedTexts[i]) {
                 missingCount++;
-
             }
 
         }
@@ -7135,19 +6718,10 @@ async function translateSubtitles() {
            FALLBACK
         ================================================== */
 
-        for (
-            let i = 0;
-            i < subtitles.length;
-            i++
-        ) {
+        for (let i = 0; i < subs.length; i++) {
 
-            if (
-                !translatedTexts[i]
-            ) {
-
-                translatedTexts[i] =
-                    subtitles[i].text;
-
+            if (!translatedTexts[i]) {
+                translatedTexts[i] = subs[i].text;
             }
 
         }
@@ -7160,72 +6734,39 @@ async function translateSubtitles() {
         ================================================== */
 
         const translated =
-            subtitles.map(
-                (
-                    item,
-                    index
-                ) => ({
-
-                    startMs:
-                        item.startMs,
-
-                    endMs:
-                        item.endMs,
-
-                    text:
-                        translatedTexts[
-                            index
-                        ]
-
+            subs.map(
+                (item, index) => ({
+                    startMs: item.startMs,
+                    endMs: item.endMs,
+                    text: translatedTexts[index]
                 })
             );
 
-        translatedSrt =
-            subtitlesToSrt(
-                translated
-            );
+        translatedSrt = subtitlesToSrt(translated);
 
-        previewMode =
-            'translated';
+        // Mốc bản dịch gốc để "Học từ bản dịch đã sửa" so sánh.
+        translatedBaseline = translatedTexts.map(normalizeSubText);
 
-        preview.value =
-            translatedSrt;
+        downloadTranslatedBtn.disabled = false;
 
-        preview.readOnly =
-            false;
+        previewTranslatedBtn.disabled = false;
 
-        downloadTranslatedBtn.disabled =
-            false;
-
-        previewTranslatedBtn.disabled =
-            false;
-
-        learnEditedBtn.disabled =
-            false;
-
-        saveEditedPreviewBtn.classList.remove(
-            'hidden'
-        );
+        // Chuyển sang xem bản dịch và đồng bộ trạng thái các nút xem trước.
+        showTranslatedPreview();
 
 
         /* =================================================
            STATUS — builtin đã tự báo trạng thái riêng ở trên.
         ================================================== */
 
-        if (
-            method !== 'builtin'
-        ) {
+        if (method !== 'builtin') {
 
-            if (
-                wasAborted
-            ) {
+            if (wasAborted) {
 
-                progressText.textContent =
-                    'Đã dừng';
+                progressText.textContent = 'Đã dừng';
 
                 showStatus(
                     translationStatus,
-
                     '⛔ Đã dừng dịch.' +
                     (
                         missingCount > 0
@@ -7234,69 +6775,50 @@ async function translateSubtitles() {
                               ' dòng còn lại giữ nguyên bản gốc.'
                             : ' Đã dịch xong trước khi dừng.'
                     ),
-
                     'warning'
                 );
 
-            } else if (
-                fatalError
-            ) {
+            } else if (fatalError) {
 
-                progressText.textContent =
-                    'Dừng do lỗi lặp lại';
+                progressText.textContent = 'Dừng do lỗi lặp lại';
 
                 showStatus(
                     translationStatus,
-
                     '❌ Dừng dịch sớm do lỗi lặp lại nhiều lần (' +
-                    (
-                        fatalError?.message ||
-                        'không xác định'
-                    ) +
+                    (fatalError?.message || 'không xác định') +
                     '). Đã giữ bản dịch cho các dòng hoàn thành, ' +
                     missingCount +
                     '/' +
-                    subtitles.length +
+                    subs.length +
                     ' dòng còn lại giữ nguyên bản gốc — kiểm tra lại API key / tên model rồi dịch lại nếu cần.',
-
                     'error'
                 );
 
-            } else if (
-                missingCount > 0
-            ) {
+            } else if (missingCount > 0) {
 
-                progressFill.style.width =
-                    '100%';
+                progressFill.style.width = '100%';
 
-                progressText.textContent =
-                    '100% — Hoàn thành (có lỗi)';
+                progressText.textContent = '100% — Hoàn thành (có lỗi)';
 
                 showStatus(
                     translationStatus,
-
                     '✅ Đã dịch xong nhưng ' +
                     missingCount +
                     ' dòng bị lỗi và giữ nguyên bản gốc. Ông có thể sửa trực tiếp rồi cho web học.',
-
                     'warning'
                 );
 
             } else {
 
-                progressFill.style.width =
-                    '100%';
+                progressFill.style.width = '100%';
 
-                progressText.textContent =
-                    '100% — Hoàn thành';
+                progressText.textContent = '100% — Hoàn thành';
 
                 showStatus(
                     translationStatus,
-
                     '✅ Đã dịch xong ' +
-                    subtitles.length +
+                    subs.length +
                     ' dòng. Ông có thể sửa trực tiếp rồi cho web học.',
-
                     'success'
                 );
 
@@ -7304,14 +6826,9 @@ async function translateSubtitles() {
 
         }
 
-    } catch (
-        error
-    ) {
+    } catch (error) {
 
-        if (
-            error?.name ===
-            'AbortError'
-        ) {
+        if (error?.name === 'AbortError') {
 
             showStatus(
                 translationStatus,
@@ -7323,13 +6840,8 @@ async function translateSubtitles() {
 
             showStatus(
                 translationStatus,
-
                 '❌ Dịch lỗi: ' +
-                (
-                    error?.message ||
-                    'Không xác định'
-                ),
-
+                (error?.message || 'Không xác định'),
                 'error'
             );
 
@@ -7337,15 +6849,15 @@ async function translateSubtitles() {
 
     } finally {
 
-        translationRunning =
-            false;
+        translationRunning = false;
 
-        translationAbortController =
-            null;
+        translationAbortController = null;
 
-        stopTranslateBtn.classList.add(
-            'hidden'
-        );
+        translationMethod.disabled = false;
+
+        convertBtn.disabled = !selectedFile;
+
+        stopTranslateBtn.classList.add('hidden');
 
         updateTranslationUI();
 
@@ -7720,10 +7232,7 @@ function parseCurrentPreviewAsSrt() {
 
 function learnFromEditedSrt() {
 
-    if (
-        previewMode !==
-        'translated'
-    ) {
+    if (previewMode !== 'translated') {
 
         showStatus(
             translationStatus,
@@ -7735,23 +7244,17 @@ function learnFromEditedSrt() {
 
     }
 
-    const edited =
-        parseCurrentPreviewAsSrt();
+    const edited = parseCurrentPreviewAsSrt();
 
-    if (
-        edited.length !==
-        subtitles.length
-    ) {
+    if (edited.length !== subtitles.length) {
 
         showStatus(
             translationStatus,
-
             '❌ Số block SRT đã sửa (' +
             edited.length +
             ') không khớp số phụ đề gốc (' +
             subtitles.length +
             ').',
-
             'error'
         );
 
@@ -7759,86 +7262,58 @@ function learnFromEditedSrt() {
 
     }
 
-    let learned =
-        0;
+    let learned = 0;
 
-    let changed =
-        0;
+    let changed = 0;
 
+    // So với bản dịch gốc của máy/AI (không bị ghi đè khi bấm "Lưu thay đổi
+    // SRT" hay khi tải file), nên không bao giờ báo nhầm "chưa có thay đổi".
     const before =
-        parseSrtText(
-            translatedSrt
-        );
+        translatedBaseline.length === subtitles.length
+            ? translatedBaseline.map(text => ({ text }))
+            : parseSrtText(translatedSrt);
 
-    for (
-        let i = 0;
-        i < subtitles.length;
-        i++
-    ) {
+    for (let i = 0; i < subtitles.length; i++) {
 
-        const source =
-            subtitles[i].text;
+        const source = subtitles[i].text;
 
-        const target =
-            edited[i].text;
+        const target = edited[i].text;
 
-        const oldTarget =
-            before[i]?.text ||
-            '';
+        const oldTarget = before[i]?.text || '';
 
-        if (
-            !target
-        ) {
+        if (!target) {
             continue;
         }
 
-        if (
-            target !==
-            oldTarget
-        ) {
+        if (target !== oldTarget) {
 
             changed++;
 
-            if (
-                addMemoryPair(
-                    source,
-                    target
-                )
-            ) {
-
+            if (addMemoryPair(source, target)) {
                 learned++;
-
             }
 
         }
 
     }
 
-    if (
-        learned > 0
-    ) {
+    if (learned > 0) {
 
         saveMemory();
 
         showStatus(
             translationStatus,
-
             '🧠 Đã học ' +
             learned +
             ' cặp từ/câu từ bản dịch ông vừa sửa.',
-
             'success'
         );
 
-    } else if (
-        changed === 0
-    ) {
+    } else if (changed === 0) {
 
         showStatus(
             translationStatus,
-
             'ℹ️ Chưa có dòng nào thay đổi so với bản dịch hiện tại.',
-
             'info'
         );
 
@@ -7846,9 +7321,7 @@ function learnFromEditedSrt() {
 
         showStatus(
             translationStatus,
-
             'ℹ️ Không có cặp mới để lưu.',
-
             'info'
         );
 
@@ -8256,24 +7729,26 @@ function downloadSrt(
 
 function syncEditedTranslatedSrt() {
 
-    if (
-        previewMode ===
-        'translated' &&
-        !preview.readOnly
-    ) {
+    if (previewMode === 'translated' && !preview.readOnly) {
 
-        const parsed =
-            parseSrtText(
-                preview.value
+        const parsed = parseSrtText(preview.value);
+
+        if (parsed.length === subtitles.length) {
+
+            translatedSrt = preview.value;
+
+        } else {
+
+            // Trước đây âm thầm tải bản cũ; giờ báo rõ để người dùng sửa lại.
+            showStatus(
+                translationStatus,
+                '⚠️ SRT đang sửa có ' +
+                parsed.length +
+                ' block (cần ' +
+                subtitles.length +
+                '). Đã tải bản hợp lệ gần nhất — hãy kiểm tra số thứ tự, timestamp và dòng trống.',
+                'warning'
             );
-
-        if (
-            parsed.length ===
-            subtitles.length
-        ) {
-
-            translatedSrt =
-                preview.value;
 
         }
 
@@ -8759,7 +8234,11 @@ const installDevtoolsProtection = (function () {
             if (!document.hidden) runDetectionCycle();
         });
 
-        setInterval(runDetectionCycle, 1500);
+        // Tab đang ẩn thì không cần kiểm tra (tiết kiệm pin trên điện thoại);
+        // visibilitychange ở trên sẽ kiểm tra ngay khi quay lại.
+        setInterval(() => {
+            if (!document.hidden) runDetectionCycle();
+        }, 1500);
     }
 
     return function start() {
@@ -8771,12 +8250,202 @@ const installDevtoolsProtection = (function () {
 })();
 
 /* =========================================================
+   SETTINGS — nhớ lựa chọn giữa các lần mở (KHÔNG lưu API key)
+========================================================= */
+
+const SETTINGS_FIELDS = [
+    'translationMethod',
+    'sourceLanguage',
+    'targetLanguage',
+    'translationMode',
+    'translationStyle',
+    'accuracyLevel',
+    'batchSize',
+    'promptPreset',
+    'customPrompt',
+    'geminiModel',
+    'geminiThinking',
+    'groqModel',
+    'deepseekModel',
+    'deepseekReasoning',
+    'openaiModel',
+    'openaiReasoning',
+    'openrouterModel'
+];
+
+let settingsTimer = null;
+
+
+function saveSettings() {
+
+    try {
+
+        const data = {
+            activeDictionary: activeDictionary
+        };
+
+        SETTINGS_FIELDS.forEach(id => {
+
+            const element = $(id);
+
+            if (element) {
+                data[id] = element.value;
+            }
+
+        });
+
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(data));
+
+    } catch {}
+
+}
+
+
+function saveSettingsSoon() {
+
+    clearTimeout(settingsTimer);
+
+    settingsTimer = setTimeout(saveSettings, 300);
+
+}
+
+
+// Trả về true nếu đã khôi phục nội dung prompt (khi đó không nạp lại prompt mẫu).
+function restoreSettings() {
+
+    let data = null;
+
+    try {
+
+        data = JSON.parse(localStorage.getItem(SETTINGS_KEY) || 'null');
+
+    } catch {}
+
+    if (!data || typeof data !== 'object') {
+        return false;
+    }
+
+    SETTINGS_FIELDS.forEach(id => {
+
+        const element = $(id);
+
+        if (!element || typeof data[id] !== 'string') {
+            return;
+        }
+
+        if (
+            element.tagName === 'SELECT' &&
+            !Array.from(element.options).some(option => option.value === data[id])
+        ) {
+            return;
+        }
+
+        if (element.tagName === 'INPUT' && !data[id].trim()) {
+            return;
+        }
+
+        element.value = data[id];
+
+    });
+
+    if (data.activeDictionary && data.activeDictionary !== activeDictionary) {
+
+        dictionaryCards.forEach(card => {
+
+            if (card.dataset.category === data.activeDictionary) {
+                card.click();
+            }
+
+        });
+
+    }
+
+    return (
+        typeof data.customPrompt === 'string' &&
+        data.customPrompt.trim() !== ''
+    );
+
+}
+
+
+function bindSettingsPersistence() {
+
+    SETTINGS_FIELDS.forEach(id => {
+
+        const element = $(id);
+
+        if (!element) {
+            return;
+        }
+
+        element.addEventListener('change', saveSettingsSoon);
+
+        element.addEventListener('input', saveSettingsSoon);
+
+    });
+
+    dictionaryCards.forEach(card => {
+        card.addEventListener('click', saveSettingsSoon);
+    });
+
+    resetPromptBtn.addEventListener('click', saveSettingsSoon);
+
+}
+
+
+// Dán/gõ tên model trên điện thoại dễ thừa khoảng trắng → trim khi rời ô.
+function bindModelInputs() {
+
+    [
+        'geminiModel',
+        'groqModel',
+        'deepseekModel',
+        'openaiModel',
+        'openrouterModel'
+    ].forEach(id => {
+
+        const element = $(id);
+
+        if (!element) {
+            return;
+        }
+
+        element.addEventListener('blur', () => {
+            element.value = element.value.trim();
+        });
+
+    });
+
+}
+
+
+// Đang dịch mà tải lại/đóng trang sẽ mất kết quả chưa lưu.
+window.addEventListener('beforeunload', event => {
+
+    if (translationRunning) {
+
+        event.preventDefault();
+
+        event.returnValue = '';
+
+    }
+
+});
+
+
+/* =========================================================
    INITIALIZE
 ========================================================= */
 
 loadMemory();
 
-loadPromptPreset();
+if (!restoreSettings()) {
+    loadPromptPreset();
+}
+
+bindModelInputs();
+
+bindSettingsPersistence();
 
 updateTranslationUI();
 
