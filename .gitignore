@@ -1,0 +1,15 @@
+# Bí mật và cấu hình cục bộ — KHÔNG commit
+.env
+.env.*
+!.env.example
+
+# Vercel / Node
+.vercel/
+node_modules/
+
+# Tệp tạm của hệ điều hành / trình soạn thảo
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
